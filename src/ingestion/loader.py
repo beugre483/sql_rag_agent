@@ -47,7 +47,7 @@ class ElectionLoader:
         df_raw = self.extractor._flatten_to_dataframe(raw_data)
         
         # 3. Nettoyage
-        print("🧹 Nettoyage des données...")
+        print(" Nettoyage des données...")
         df_clean = self.cleaner.clean(df_raw)
         
         # 4. Sauvegarde CSV (Checkpoint)
@@ -55,9 +55,7 @@ class ElectionLoader:
         df_clean.to_csv(self.output_csv_path, index=False)
         print(f" Données nettoyées sauvegardées : {self.output_csv_path}")
 
-        # ---------------------------------------------------------
-        # ÉTAPE 2 : CRÉATION DES TABLES
-        # ---------------------------------------------------------
+
         print(" Initialisation de la base de données...")
         
         # On utilise SQLAlchemy juste pour créer les tables proprement selon le schema.py
@@ -70,9 +68,7 @@ class ElectionLoader:
         metadata.create_all(engine)
         print("Tables créées (Circonscriptions & Candidats).")
 
-        # ---------------------------------------------------------
-        # ÉTAPE 3 : INSERTION DES DONNÉES
-        # ---------------------------------------------------------
+    
         print(" Insertion des données dans SQLite...")
         
         # On utilise ta classe de connexion pour l'insertion

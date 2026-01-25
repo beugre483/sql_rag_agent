@@ -3,9 +3,7 @@ from sqlalchemy import Table, Column, Integer, String, Float, ForeignKey, MetaDa
 
 metadata = MetaData()
 
-# -------------------------
-# 1. Table circonscriptions
-# -------------------------
+
 circonscriptions = Table(
     "circonscriptions",
     metadata,
@@ -29,9 +27,7 @@ circonscriptions = Table(
     Column("bulletins_blancs_pourcentage", Float, default=0.0),
 )
 
-# -------------------------
-# 2. Table candidats
-# -------------------------
+
 candidats = Table(
     "candidats",
     metadata,
@@ -50,11 +46,7 @@ candidats = Table(
     Column("est_elu", Boolean, default=False), 
 )
 
-# -------------------------
-# 3. Vues Stratégiques (Mises à jour avec _norm)
-# -------------------------
 
-# Vue A : Vue Globale (L'agent utilisera celle-ci pour chercher des noms)
 vue_resultats_detailles = """
 CREATE VIEW IF NOT EXISTS vue_resultats_detailles AS
 SELECT 
@@ -87,7 +79,7 @@ FROM vue_resultats_detailles
 WHERE est_elu = 1 OR est_elu = 'TRUE';
 """
 
-# Vue C : Stats Régionales (Pas besoin de norm ici, l'agent groupe par nom propre)
+
 vue_stats_regionales = """
 CREATE VIEW IF NOT EXISTS vue_stats_regionales AS
 SELECT 
