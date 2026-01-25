@@ -1,0 +1,28 @@
+[tool.poetry]
+name = "sql-rag-agent"
+version = "0.1.0"
+description = "Agent RAG et SQL pour le chat"
+authors = ["NIAMBA BEUGRE OKESS <beugre.niamba@centrale-casablanca.ma>"]
+packages = [
+    { include = "*", from = "src" }
+]
+
+[tool.poetry.dependencies]
+# La version de Python doit être définie ici
+python = ">=3.11,<4.0"
+
+# Syntaxe correcte pour Poetry : package = "version"
+pandas = "^2.2.0"
+langchain = "^0.3.0"
+plotly = "^5.18.0"
+streamlit = "^1.30.0"
+python-dotenv = "^1.0.0"
+llama-index = "0.12.5"
+llama-cloud-services = "0.6.90"
+
+[tool.poetry.group.dev.dependencies]
+ipykernel = "^6.29.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
