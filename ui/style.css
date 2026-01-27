@@ -1,0 +1,118 @@
+/* Amélioration de la visibilité - Thème clair moderne */
+
+/* Sidebar */
+[data-testid="stSidebar"] {
+    background-color: #f8f9fa !important;
+}
+
+[data-testid="stSidebar"] .css-1d391kg {
+    background-color: #f8f9fa !important;
+}
+
+/* Titre de la sidebar */
+[data-testid="stSidebar"] h1 {
+    color: #1a1a1a !important;
+    font-weight: 700 !important;
+    font-size: 1.8rem !important;
+    margin-bottom: 1.5rem !important;
+}
+
+/* Navigation - Radio buttons */
+[data-testid="stSidebar"] label {
+    color: #2c3e50 !important;
+    font-size: 1.1rem !important;
+    font-weight: 500 !important;
+}
+
+/* Radio button sélectionné */
+[data-testid="stSidebar"] [data-baseweb="radio"] > div {
+    background-color: #ffffff !important;
+    border: 2px solid #e0e0e0 !important;
+    border-radius: 8px !important;
+    padding: 0.5rem !important;
+    margin: 0.3rem 0 !important;
+}
+
+[data-testid="stSidebar"] [data-baseweb="radio"] > div:hover {
+    background-color: #e3f2fd !important;
+    border-color: #2196F3 !important;
+}
+
+/* Texte du radio button */
+[data-testid="stSidebar"] [data-baseweb="radio"] label span {
+    color: #1a1a1a !important;
+    font-weight: 600 !important;
+}
+
+/* Zone principale */
+.main {
+    background-color: #ffffff !important;
+}
+
+/* Titres principaux */
+h1, h2, h3, h4, h5, h6 {
+    color: #1a1a1a !important;
+    font-weight: 700 !important;
+}
+
+/* Texte normal */
+p, span, div {
+    color: #2c3e50 !important;
+}
+
+/* Markdown */
+.stMarkdown {
+    color: #2c3e50 !important;
+}
+
+/* Dataframes */
+[data-testid="stDataFrame"] {
+    border: 1px solid #e0e0e0 !important;
+    border-radius: 8px !important;
+}
+
+/* Selectbox */
+[data-baseweb="select"] {
+    background-color: #ffffff !important;
+    border: 2px solid #e0e0e0 !important;
+    border-radius: 8px !important;
+}
+
+[data-baseweb="select"] span {
+    color: #1a1a1a !important;
+    font-weight: 500 !important;
+}
+
+/* Header */
+header {
+    background-color: #ffffff !important;
+}
+
+/* Section "Navigation" dans la sidebar */
+[data-testid="stSidebar"] p {
+    color: #1a1a1a !important;
+    font-weight: 600 !important;
+    font-size: 0.9rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    margin-bottom: 1rem !important;
+}
+
+/* Amélioration du contraste général */
+* {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Hover sur les éléments interactifs */
+button:hover, [role="button"]:hover {
+    opacity: 0.9 !important;
+    transform: scale(1.02) !important;
+    transition: all 0.2s ease !important;
+}
+
+/* Accent color pour les éléments sélectionnés */
+[aria-checked="true"] {
+    color: #2196F3 !important;
+    font-weight: 700 !important;
+}

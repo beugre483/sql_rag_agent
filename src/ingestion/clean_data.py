@@ -29,13 +29,24 @@ class ElectionDataCleaner:
     def normalize_text(s: str) -> str:
         """
         Transforme le texte en minuscule et supprime les accents.
+        Compatible avec Pandas (NaN) et Python pur (None).
         """
-        if pd.isna(s):
+        # 1. Vérification rapide pour éviter les erreurs
+        if s is None:
             return ""
+            
+        # 2. Si c'est un "NaN" (Not a Number) venant de Pandas/Excel
+        # On vérifie si c'est un float (car NaN est un float) pour éviter des bugs
+        if isinstance(s, float) and pd.isna(s):
+            return ""
+
+        # 3. Conversion en string (sécurité) et minuscule
         s = str(s).lower()
+        
+        # 4. Suppression des accents
         s = ''.join(c for c in unicodedata.normalize('NFD', s)
                     if unicodedata.category(c) != 'Mn')
-        return s
+        return s.strip()
 
     @staticmethod
     def clean_numeric_string(s: str) -> str:

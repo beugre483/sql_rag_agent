@@ -19,7 +19,7 @@ class DatabaseConnection:
         self.read_only = read_only
 
         if not self.db_path.exists():
-            print(f"⚠️ Attention : Le fichier base de données '{self.db_path.name}' n'existe pas encore.")
+            print(f" Attention : Le fichier base de données '{self.db_path.name}' n'existe pas encore.")
 
     def get_connection(self) -> sqlite3.Connection:
         """

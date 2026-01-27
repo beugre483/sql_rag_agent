@@ -3,7 +3,6 @@ from sqlalchemy import Table, Column, Integer, String, Float, ForeignKey, MetaDa
 
 metadata = MetaData()
 
-
 circonscriptions = Table(
     "circonscriptions",
     metadata,
@@ -12,7 +11,7 @@ circonscriptions = Table(
     Column("code_circonscription", String), 
     Column("nom_circonscription", String, nullable=False),
     
-    # Colonnes NORMALISÉES (Ajoutées pour la recherche facile)
+    # Colonnes NORMALISÉES
     Column("region_nom_norm", String, index=True),
     Column("nom_circonscription_norm", String, index=True),
 
@@ -26,7 +25,6 @@ circonscriptions = Table(
     Column("bulletins_blancs_nombre", Integer, default=0),
     Column("bulletins_blancs_pourcentage", Float, default=0.0),
 )
-
 
 candidats = Table(
     "candidats",
@@ -46,12 +44,14 @@ candidats = Table(
     Column("est_elu", Boolean, default=False), 
 )
 
+# --- VUES CORRIGÉES ---
 
+# Vue A : Données complètes (Déjà correcte, mais on s'assure de tout avoir)
 vue_resultats_detailles = """
 CREATE VIEW IF NOT EXISTS vue_resultats_detailles AS
 SELECT 
     ci.region_nom,
-    ci.region_nom_norm, -- L'agent peut filtrer ici (ex: WHERE region_nom_norm LIKE '%gbeke%')
+    ci.region_nom_norm,
     ci.nom_circonscription,
     ci.nom_circonscription_norm,
     ci.taux_participation,
@@ -66,31 +66,37 @@ FROM candidats c
 JOIN circonscriptions ci ON c.circonscription_id = ci.id;
 """
 
-# Vue B : Gagnants uniquement
+# Vue B : Gagnants uniquement 
+# AJOUT des colonnes _norm pour que l'agent puisse filtrer ici aussi !
 vue_elus_uniquement = """
 CREATE VIEW IF NOT EXISTS vue_elus_uniquement AS
 SELECT 
     region_nom,
+    region_nom_norm,
     nom_circonscription,
+    nom_circonscription_norm,
     parti_politique,
+    parti_politique_norm,
     nom_liste_candidat,
+    nom_liste_candidat_norm,
     score_voix
 FROM vue_resultats_detailles
-WHERE est_elu = 1 OR est_elu = 'TRUE';
+WHERE est_elu = 1 OR est_elu = 'TRUE' OR est_elu = '1';
 """
 
-
+# Vue C : Stats régionales
+# AJOUT de region_nom_norm pour permettre des requêtes comme "Participation à Gbeke"
 vue_stats_regionales = """
 CREATE VIEW IF NOT EXISTS vue_stats_regionales AS
 SELECT 
     region_nom,
+    region_nom_norm,
     SUM(inscrits) as total_inscrits,
     SUM(votants) as total_votants,
     SUM(suffrages_exprimes) as total_exprimes,
     ROUND((CAST(SUM(votants) AS FLOAT) / SUM(inscrits)) * 100, 2) as taux_participation_moyen
 FROM circonscriptions
-GROUP BY region_nom;
+GROUP BY region_nom, region_nom_norm;
 """
 
 creation_views_sql = [vue_resultats_detailles, vue_elus_uniquement, vue_stats_regionales]
-
