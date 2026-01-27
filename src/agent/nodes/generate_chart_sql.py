@@ -8,9 +8,11 @@ from langgraph.graph import END
 from typing import Literal, List, Dict
 
 from ..state import AgentState
+from langsmith import traceable
 
 
 
+@traceable(name="determine_chart_intent")
 def determine_chart_intent_node(state: AgentState) -> Command[Literal["generate_chart", "generate_final_answer"]]:
     """
     Décide si on doit générer un graphique ou passer directement à la réponse texte.
@@ -44,7 +46,7 @@ def determine_chart_intent_node(state: AgentState) -> Command[Literal["generate_
         return Command(goto="generate_final_answer")
 
 
-
+@traceable(name="chart_generation")
 def generate_chart_node(state: AgentState) -> Command[Literal["generate_final_answer"]]:
     """
     Génère le graphique demandé et stocke l'image (base64 ou path) dans le state.

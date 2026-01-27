@@ -8,10 +8,12 @@ import re
 from ..state import AgentState
 from ..llm_client import LLMClient
 from src.ingestion.clean_data import ElectionDataCleaner
+from langsmith import traceable
+
 
 # Initialisation du client LLM
 llm_client = LLMClient()
-
+@traceable(name="sql_generation")
 def generate_sql_query_node(state: AgentState) -> Command[Literal["verify_sql"]]:
     """
     Nœud de génération SQL avec typage strict des colonnes pour SQLite.
@@ -92,7 +94,12 @@ De nombreuses villes ont deux circonscriptions : une 'COMMUNE' et une 'SOUS-PRÉ
    
 3. PRÉCISION SOUS-PRÉFECTURE : Si l'utilisateur dit "S/P", "SP", "Village" ou "Sous-préfecture", cherche :
    WHERE nom_circonscription_norm LIKE '%agboville%prefecture%'
-
+   
+"N'utilise jamais l'opérateur '=' pour les noms de lieux ou de personnes. Utilise toujours l'opérateur 'LIKE' avec des jokers '%' de chaque côté (ex: LIKE '%nom%') sur les colonnes suffixées par '_norm
+1. SUPPRESSION DES POINTS : "R.H.D.P." ou  devient "rhdp" ou "rdr". Ne jamais inclure de points dans le SQL.
+2. SUPPRESSION DES TIRETS : "PPA-CI" ou "PDCI-RDA" devient "ppa-ci" ou "pdci-rda".
+3. MINUSCULES : Transforme tout en minuscules (ex: "Abidjan" -> "abidjan").
+Si une question porte sur une ville ou une circonscription sans précision (ex: juste 'Tiapoum' ou 'Agboville'), sélectionne TOUJOURS la colonne nom_circonscription dans ton SQL. Cela permettra de distinguer les résultats si plusieurs entités existent (Commune, Sous-préfecture, etc.). Utilise LIKE '%terme%' pour attraper toutes les variantes
 {error_feedback}
 
 CONTEXTE DE RÉFÉRENCE :

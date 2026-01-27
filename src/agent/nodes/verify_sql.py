@@ -5,6 +5,8 @@ from typing import Literal
 from langgraph.types import Command
 from pathlib import Path
 from ..state import AgentState
+from langsmith import traceable
+
 
 current_dir = Path(__file__).resolve().parent
 project_root = current_dir.parent.parent.parent
@@ -18,6 +20,7 @@ ALLOWED_OBJECTS = [
     "candidats"
 ]
 
+@traceable(name="sql_verification")
 def verify_sql_node(state: AgentState) -> Command[Literal["execute_sql", "generate_sql", "reponse_hors_sujet"]]:
     query = state['sql_query']
     

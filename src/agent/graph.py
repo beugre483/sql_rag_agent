@@ -8,8 +8,8 @@ from .state import AgentState
 from src.agent.nodes.classify_intent_sql import (
     classify_intent_node, 
     reponse_hors_sujet_node, 
-    reponse_politique_node
-)
+    reponse_politique_node)
+from src.agent.nodes.generate_clarification_node import generate_clarification_node
 from src.agent.nodes.retrieve_similar_sql import retrieve_similar_examples
 from src.agent.nodes.generate_adapte_sql import generate_sql_query_node
 from src.agent.nodes.verify_sql import verify_sql_node
@@ -30,7 +30,7 @@ def guardrail_node(state: AgentState) -> Command:
         "modifie", "modifier", "change", "changer",
         "insère", "insérer", "ajoute", "ajouter",
         "crée", "créer", "altère", "truncate", "drop",
-        "rm ", "rm -rf", "pirate", "hack"
+        "rm ", "rm -rf", "pirate", "hack","ignore"
     ]
     
     user_query = state.get("user_query", "").lower()
@@ -55,8 +55,6 @@ def guardrail_node(state: AgentState) -> Command:
 def build_agent_graph():
     """
     Construit le graphe de l'agent.
-    Puisque chaque nœud renvoie un objet Command(goto="..."), 
-    nous n'avons plus besoin de définir d'edges ou de conditional_edges ici.
     """
     
     # Initialisation du graphe avec la structure AgentState
@@ -65,6 +63,10 @@ def build_agent_graph():
     # --- 1. AJOUT DES NŒUDS ---
     builder.add_node("guardrail", guardrail_node)
     builder.add_node("classify_intent", classify_intent_node)
+    
+   
+    builder.add_node("generate_clarification", generate_clarification_node)
+    
     builder.add_node("recherche_similaire", retrieve_similar_examples)
     builder.add_node("generate_sql", generate_sql_query_node)
     builder.add_node("verify_sql", verify_sql_node)
@@ -75,8 +77,6 @@ def build_agent_graph():
     builder.add_node("reponse_hors_sujet", reponse_hors_sujet_node)
     builder.add_node("reponse_politique", reponse_politique_node)
 
-    # --- 2. POINT D'ENTRÉE ---
     builder.set_entry_point("guardrail")
-
 
     return builder.compile()

@@ -5,10 +5,18 @@ from langchain_core.prompts import ChatPromptTemplate
 from typing import Literal
 from ..state import AgentState, UserQueryClassification
 from ..llm_client import LLMClient
+from langsmith import traceable
 
-llm_client = LLMClient()
 
+
+@traceable(name="intent_classification")
 def classify_intent_node(state: AgentState) -> Command[Literal["recherche_similaire", "reponse_hors_sujet", "reponse_politique"]]:
+    
+    try:
+        llm_client = LLMClient()
+    except Exception as e:
+        # Si la clé API est absente, on part directement en erreur
+        return _handle_classification_error(str(e))
     
     data_context = """
 SCHÉMA EXACT DE LA BASE DE DONNÉES ÉLECTORALES IVOIRIENNES :
@@ -59,6 +67,15 @@ EXEMPLES DE QUESTIONS HORS SCOPE :
 - Questions sur d'autres pays
 - Questions non législatives ivoiriennes
 - Questions prédictives ou de financement
+
+DÉFINITION DES QUESTIONS AMBIGUËS (request_validity = "ambiguous")
+
+Tu dois classer une question comme "ambiguous" si elle manque d'informations essentielles pour construire une requête SQL unique et précise. Voici les catégories d'ambiguïté :
+
+1. LIEU MANQUANT OU INCOMPLET :
+   - L'utilisateur demande un résultat sans préciser d'endroit.
+   - Exemple : "Qui a gagné ?", "Donne-moi le top 5 des scores", "Quel est le taux de participation ?".
+   - RAISON : Impossible de savoir sur quelle commune ou région filtrer.
 """
 
     system_prompt = f"""
@@ -107,9 +124,12 @@ EXEMPLES DE QUESTIONS HORS SCOPE :
         print(f"  → Nature:   {classification.query_nature.upper()}")
         print(f"  → Chart:    {classification.chart_type}")
 
-        # Routing
         if classification.request_validity == "allowed":
             goto = "recherche_similaire"
+        
+        elif classification.request_validity == "ambiguous":
+            goto = "generate_clarification"
+            
         elif classification.request_validity == "out_of_scope":
             goto = "reponse_hors_sujet"
         elif classification.request_validity == "policy_violation":
@@ -125,24 +145,24 @@ EXEMPLES DE QUESTIONS HORS SCOPE :
         )
         
     except Exception as e:
-        print(f"[Classify Intent Error]: {e}")
+        return _handle_classification_error(str(e))
+    
+    
         
-        error_classification = UserQueryClassification(
-            request_validity="out_of_scope",
-            query_nature="simple_retrieval",
-            task_type=None,
-            chart_type=None,
-            reasoning_summary=f"System error: {str(e)}"
-        )
-        
-        return Command(
-            update={
-                "classification": error_classification,
-                "errors": [f"Classification failed: {str(e)}"]  # ✅ Liste avec UNE erreur
-            },
-            goto="reponse_hors_sujet"
-        )
+def _handle_classification_error(error_msg: str) -> Command:
+    """Génère une réponse de secours en cas d'erreur technique."""
+    print(f"[Error] {error_msg}")
+    err_class = UserQueryClassification(
+        request_validity="out_of_scope",
+        query_nature="simple_retrieval",
+        reasoning_summary=f"Erreur système: {error_msg}"
+    )
+    return Command(
+        update={"classification": err_class, "errors": [error_msg]},
+        goto="reponse_hors_sujet"
+    )
 
+        
 
 def reponse_hors_sujet_node(state: AgentState) -> Command:
     """

@@ -2,13 +2,13 @@ import streamlit as st
 from pathlib import Path
 import sys
 import pandas as pd
+import base64
 
 # Ajouter le dossier racine au path pour les imports
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(BASE_DIR))
 
 from src.agent.graph import build_agent_graph
-
 
 def chat_page():
     """
@@ -17,117 +17,111 @@ def chat_page():
     st.header("Assistant Electoral IA")
     st.markdown("Posez vos questions sur les données électorales")
     
-    # Initialiser l'agent (avec cache pour éviter de reconstruire à chaque interaction)
+    # Initialiser l'agent avec cache
     @st.cache_resource
     def get_agent():
         return build_agent_graph()
     
     agent = get_agent()
     
-    # Initialiser l'historique de conversation dans la session
+    # Initialiser l'historique
     if "messages" not in st.session_state:
         st.session_state.messages = []
     
-    # Afficher l'historique des messages
-    for message in st.session_state.messages:
+    # --- FONCTION INTERNE POUR AFFICHER LES MESSAGES ---
+    def display_message(message):
         with st.chat_message(message["role"]):
+            # 1. Texte
             st.markdown(message["content"])
             
-            # Afficher le graphique si présent
+            # 2. Graphique (Décodage Base64)
             if message.get("chart"):
-                st.plotly_chart(message["chart"], use_container_width=True)
+                chart_info = message["chart"]
+                try:
+                    # Décodage de la chaîne base64 envoyée par Matplotlib
+                    img_bytes = base64.b64decode(chart_info["data"])
+                    st.image(img_bytes, width="stretch")
+                except Exception as e:
+                    st.error(f"Erreur d'affichage du graphique : {e}")
             
-            # Afficher les données SQL si présentes
+            # 3. Données SQL (Tableau)
             if message.get("sql_results") is not None:
                 with st.expander("Voir les données brutes"):
-                    # Convertir en DataFrame si ce n'est pas déjà fait
-                    if isinstance(message["sql_results"], list):
-                        df = pd.DataFrame(message["sql_results"])
-                    else:
-                        df = message["sql_results"]
-                    st.dataframe(df, use_container_width=True)
+                    results = message["sql_results"]
+                    df = pd.DataFrame(results) if isinstance(results, list) else results
+                    st.dataframe(df, width="stretch")
+
+    # Afficher l'historique existant
+    for message in st.session_state.messages:
+        display_message(message)
     
-    # Input utilisateur
+    # --- INPUT UTILISATEUR ---
     if prompt := st.chat_input("Posez votre question ici..."):
-        st.session_state.messages.append({"role": "user", "content": prompt})
-        
+        # Ajouter et afficher le message utilisateur
+        user_msg = {"role": "user", "content": prompt}
+        st.session_state.messages.append(user_msg)
         with st.chat_message("user"):
             st.markdown(prompt)
         
+        # Réponse de l'assistant
         with st.chat_message("assistant"):
-            with st.spinner("Analyse en cours..."):
+            with st.spinner("Analyse des données en cours..."):
                 try:
+                    # Préparation de l'état initial pour LangGraph
                     initial_state = {
-    "user_query": prompt,
-    "classification": None,
-    "sql_query": None,
-    "sql_results": [],
-    "chart_generated": False, # On l'initialise ici !
-    "errors": [],
-    "final_answer": None
-}
+                        "user_query": prompt,
+                        "classification": None,
+                        "sql_query": None,
+                        "sql_results": [],
+                        "chart_generated": False,
+                        "errors": [],
+                        "final_answer": None
+                    }
                     
-                    # Invoquer l'agent
+                    # Invoquer l'agent (LangGraph)
                     result = agent.invoke(initial_state)
                     
+                    # Extraction des résultats
                     final_answer = result.get("final_answer", "Désolé, je n'ai pas pu générer une réponse.")
                     sql_results = result.get("sql_results")
-                    chart_data = result.get("chart_data")
+                    # Récupère l'image base64 depuis le node generate_chart
+                    chart_data = result.get("chart_data") 
                     
+                    # Affichage immédiat du texte
                     st.markdown(final_answer)
                     
-                    chart = None
-                    if chart_data:
-                        # Si chart_data contient déjà une figure Plotly
-                        if hasattr(chart_data, '__call__') or hasattr(chart_data, 'show'):
-                            chart = chart_data
-                        else:
-                            # Sinon, créer le graphique ici selon vos données
-                            pass
+                    # Affichage immédiat du graphique si présent
+                    if chart_data and isinstance(chart_data, dict) and "data" in chart_data:
+                        img_bytes = base64.b64decode(chart_data["data"])
+                        st.image(img_bytes, width="stretch")
                     
-                    # Afficher le graphique si disponible
-                    if chart:
-                        st.plotly_chart(chart, use_container_width=True)
-                    
-                    # Afficher les données SQL si disponibles
+                    # Affichage immédiat du tableau si présent
                     if sql_results is not None:
                         with st.expander("Voir les données brutes"):
-                            # Convertir en DataFrame si c'est une liste de dict
-                            if isinstance(sql_results, list):
-                                df = pd.DataFrame(sql_results)
-                            elif isinstance(sql_results, pd.DataFrame):
-                                df = sql_results
-                            else:
-                                df = pd.DataFrame([sql_results])
-                            
-                            st.dataframe(df, use_container_width=True)
+                            df = pd.DataFrame(sql_results) if isinstance(sql_results, list) else sql_results
+                            st.dataframe(df, width="stretch")
                     
-                    # Ajouter la réponse à l'historique
+                    # Sauvegarde dans l'historique
                     message_data = {
                         "role": "assistant",
                         "content": final_answer,
+                        "chart": chart_data,
+                        "sql_results": sql_results
                     }
-                    
-                    # Ajouter les données optionnelles
-                    if chart:
-                        message_data["chart"] = chart
-                    if sql_results is not None:
-                        message_data["sql_results"] = sql_results
-                    
                     st.session_state.messages.append(message_data)
                     
                 except Exception as e:
                     import traceback
-                    st.error(f"Erreur lors du traitement de votre question : {str(e)}")
-                    st.error(f"Détails: {traceback.format_exc()}")
+                    error_details = traceback.format_exc()
+                    st.error(f"Erreur : {str(e)}")
+                    # On log l'erreur pour le debug mais on reste propre pour l'utilisateur
                     st.session_state.messages.append({
                         "role": "assistant", 
-                        "content": f"Erreur: {str(e)}"
+                        "content": "Désolé, une erreur technique est survenue."
                     })
-    
-    # Bouton pour réinitialiser la conversation
-    col1, col2 = st.columns([1, 5])
-    with col1:
-        if st.button("Nouvelle conversation", type="secondary"):
-            st.session_state.messages = []
-            st.rerun()
+
+    # --- BOUTON RESET ---
+    st.sidebar.divider()
+    if st.sidebar.button("Nouvelle conversation"):
+        st.session_state.messages = []
+        st.rerun()

@@ -7,11 +7,11 @@ import operator
 from pydantic import BaseModel, Field
 
 class UserQueryClassification(BaseModel):
-    request_validity: Literal["allowed", "out_of_scope", "policy_violation"]
+    request_validity: Literal["allowed", "out_of_scope", "policy_violation","ambiguous"]
     query_nature: Literal["simple_retrieval", "ranking", "aggregation", "comparison"]
     task_type: Optional[Literal["sql_query", "visualization", "mixed"]] = None
     chart_type: Optional[Literal["bar", "histogram", "pie", "line", "map"]] = None
-    reasoning_summary: str
+    reasoning_summary: str=""
 
 # ON CHANGE AgentState EN TypedDict
 class AgentState(TypedDict):

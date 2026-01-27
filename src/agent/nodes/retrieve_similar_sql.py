@@ -5,6 +5,8 @@ from rank_bm25 import BM25Okapi
 from langgraph.types import Command
 from typing import Literal
 from ..state import AgentState
+from langsmith import traceable
+
 
 # --- VARIABLES GLOBALES (Cache) ---
 _BM25_MODEL = None
@@ -58,6 +60,8 @@ def load_knowledge_base():
         
     return _BM25_MODEL, _EXAMPLES_DATA
 
+
+@traceable(name="retrieve_similar_example_sql")
 def retrieve_similar_examples(state: AgentState) -> Command[Literal["generate_sql"]]:
     """
     Nœud du graphe : Trouve les 2 meilleurs exemples SQL pour aider le LLM.

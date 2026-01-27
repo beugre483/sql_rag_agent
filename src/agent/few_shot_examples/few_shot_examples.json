@@ -4,69 +4,83 @@
     "intention": "detail_candidat",
     "question": "Combien de voix a obtenu Koto Ehou Sopie dans la circonscription d'Agboville ?",
     "sql_query": "SELECT score_voix FROM vue_resultats_detailles WHERE nom_liste_candidat_norm LIKE '%koto%' AND nom_circonscription_norm LIKE '%agboville%'",
-    "explication": "Recherche précise sur un candidat. Utilisation des colonnes '_norm' et de LIKE pour la tolérance."
+    "explication": "Recherche sur un candidat. Utilisation de LIKE avec % pour tolérer les noms partiels."
   },
   {
     "id": 2,
     "intention": "detail_parti_region",
     "question": "Quels sont les résultats du PDCI-RDA dans la région de l'Agnéby-Tiassa ?",
-    "sql_query": "SELECT nom_liste_candidat, score_voix FROM vue_resultats_detailles WHERE parti_politique_norm = 'pdci rda' AND region_nom_norm = 'agneby tiassa'",
-    "explication": "Filtre par parti et région. Utilisation de 'vue_resultats_detailles' pour éviter la jointure."
+    "sql_query": "SELECT nom_liste_candidat, score_voix FROM vue_resultats_detailles WHERE parti_politique_norm LIKE '%pdci rda%' AND region_nom_norm LIKE '%agneby tiassa%'",
+    "explication": "Filtre par parti et région. Utilisation de LIKE au lieu de = pour plus de robustesse."
   },
   {
     "id": 3,
     "intention": "gagnant_local",
     "question": "Qui a gagné à Azaguié ?",
     "sql_query": "SELECT nom_liste_candidat, parti_politique FROM vue_elus_uniquement WHERE nom_circonscription_norm LIKE '%azaguie%'",
-    "explication": "Question sur le vainqueur -> Utilisation IMPÉRATIVE de 'vue_elus_uniquement' pour exclure les perdants."
+    "explication": "Vainqueur local. Utilisation de la vue_elus_uniquement et LIKE pour la ville."
   },
   {
     "id": 4,
     "intention": "statistiques_gagnants",
     "question": "Combien de sièges le RHDP a-t-il remportés au total ?",
-    "sql_query": "SELECT COUNT(*) FROM vue_elus_uniquement WHERE parti_politique_norm = 'rhdp'",
-    "explication": "Comptage des gagnants -> Utilisation de COUNT(*) sur la vue 'vue_elus_uniquement'."
+    "sql_query": "SELECT COUNT(*) FROM vue_elus_uniquement WHERE parti_politique_norm LIKE '%rhdp%'",
+    "explication": "Comptage des sièges gagnés par parti via LIKE sur la colonne norm."
   },
   {
     "id": 5,
     "intention": "top_participation",
     "question": "Quelle région a le plus fort taux de participation ?",
     "sql_query": "SELECT region_nom, taux_participation_moyen FROM vue_stats_regionales ORDER BY taux_participation_moyen DESC LIMIT 1",
-    "explication": "Classement régional -> Utilisation de 'vue_stats_regionales' et tri décroissant (DESC) avec LIMIT 1."
+    "explication": "Classement simple sur une vue pré-agrégée."
   },
   {
     "id": 6,
     "intention": "classement_votants",
     "question": "Classe les régions par nombre total de votants.",
     "sql_query": "SELECT region_nom, total_votants FROM vue_stats_regionales ORDER BY total_votants DESC",
-    "explication": "Liste ordonnée macro -> Utilisation de 'vue_stats_regionales'. Pas besoin de GROUP BY car la vue est déjà groupée."
+    "explication": "Liste ordonnée décroissante."
   },
   {
     "id": 7,
     "intention": "candidats_non_elus",
     "question": "Qui a perdu à Cocody malgré un bon score ?",
     "sql_query": "SELECT nom_liste_candidat, score_voix, pourcentage_voix FROM vue_resultats_detailles WHERE nom_circonscription_norm LIKE '%cocody%' AND est_elu = 0 ORDER BY score_voix DESC",
-    "explication": "Recherche de perdants -> Utilisation de 'vue_resultats_detailles' avec le filtre explicite 'est_elu = 0'."
+    "explication": "Recherche de perdants avec filtre est_elu = 0 et LIKE pour la commune."
   },
   {
     "id": 8,
     "intention": "comptage_candidats_parti",
     "question": "Combien de candidats le PPA-CI a-t-il présenté au total ?",
-    "sql_query": "SELECT COUNT(*) FROM vue_resultats_detailles WHERE parti_politique_norm = 'ppa ci'",
-    "explication": "Comptage total (gagnants + perdants) -> On utilise 'vue_resultats_detailles' (et non pas la vue élus)."
+    "sql_query": "SELECT COUNT(*) FROM vue_resultats_detailles WHERE parti_politique_norm LIKE '%ppa ci%'",
+    "explication": "Comptage total des candidatures via LIKE."
   },
   {
     "id": 9,
     "intention": "filtre_numerique",
     "question": "Quels candidats ont obtenu plus de 10 000 voix ?",
     "sql_query": "SELECT nom_liste_candidat, region_nom, score_voix FROM vue_resultats_detailles WHERE score_voix > 10000",
-    "explication": "Filtre mathématique simple sur la colonne score_voix."
+    "explication": "Filtre numérique classique."
   },
   {
     "id": 10,
     "intention": "info_regionale_specifique",
     "question": "Quel est le taux de participation dans le Haut-Sassandra ?",
     "sql_query": "SELECT taux_participation_moyen FROM vue_stats_regionales WHERE region_nom_norm LIKE '%haut sassandra%'",
-    "explication": "Récupération d'une métrique précise pré-calculée dans 'vue_stats_regionales'."
+    "explication": "Recherche géographique précise avec LIKE."
+  },
+  {
+    "id": 11,
+    "intention": "_nombre_d'inscrit_abidjan",
+    "question": "Donne moi le nombre d'inscrits à Abidjan",
+    "sql_query": "SELECT total_inscrits FROM vue_stats_regionales WHERE region_nom_norm LIKE '%abidjan%'",
+    "explication": "IMPORTANT : Toujours utiliser LIKE '%...%' avec les colonnes _norm pour éviter les erreurs de correspondance exacte sur les noms de ville ou région."
+  },
+  {
+    "id": 12,
+    "intention": "ambiguite_geographique",
+    "question": "Qui a gagné à Tiapoum ?",
+    "sql_query": "SELECT nom_circonscription, nom_liste_candidat, parti_politique FROM vue_elus_uniquement WHERE nom_circonscription_norm LIKE '%tiapoum%'",
+    "explication": "Le nom est vague. On sélectionne 'nom_circonscription' en plus pour que la réponse finale puisse distinguer Commune et Sous-Préfecture."
   }
 ]

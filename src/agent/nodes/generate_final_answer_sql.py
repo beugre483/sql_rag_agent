@@ -6,10 +6,12 @@ from langchain_core.prompts import ChatPromptTemplate
 from ..state import AgentState
 from ..llm_client import LLMClient
 from typing import List, Dict, Any
+from langsmith import traceable
+
 
 # Initialisation du client LLM
 llm_client = LLMClient()
-
+@traceable(name="generate_final_answer")
 def generate_final_answer_node(state: AgentState) -> Command:
     """
     Nœud final : Présente les résultats de façon structurée et compréhensible.
@@ -39,6 +41,11 @@ Ton rôle est de présenter les résultats des législatives ivoiriennes de faç
 2. SYNTHÈSE : Ne fais pas de longs paragraphes. Utilise des tirets pour lister les élus.
 3. MISE EN FORME : Mets les noms des **ÉLUS** et des **PARTIS** en gras.
 4. CLARTÉ : L'interlocuteur doit comprendre immédiatement qui a gagné dans quelle zone, même s'il n'a pas précisé "commune" ou "sous-préfecture" dans sa question.
+TRANSPARENCE : Si les résultats SQL contiennent plusieurs circonscriptions différentes pour un même nom (ex: 'Tiapoum COMMUNE' et 'Tiapoum SOUS-PREFECTURE'), mentionne-le clairement. 
+   Exemple : "Vous avez posé la question pour Tiapoum, voici les résultats pour la Commune et la Sous-Préfecture :"
+
+5. SYNTHÈSE : Ne te contente pas de lister les données. Fais une phrase naturelle.
+   Exemple : "Au RHDP, le candidat X a remporté la victoire avec Y voix
 
 Exemple de structure attendue :
 "Voici les résultats pour Agboville :

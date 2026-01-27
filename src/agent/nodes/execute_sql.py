@@ -4,7 +4,9 @@ from typing import Literal
 from pathlib import Path
 from ..state import AgentState
 from src.database.connection import DatabaseConnection
+from langsmith import traceable
 
+@traceable(name="sql_execution")
 def execute_sql_node(state: AgentState) -> Command[Literal["determine_chart_intent"]]:
     query = state['sql_query']
     

@@ -2,7 +2,9 @@
 from langgraph.graph import StateGraph
 from typing import Dict, Any
 from ..state import AgentState
+from langsmith import traceable
 
+@traceable(name="guardrail_security")
 def guardrail_node(state: AgentState) -> AgentState:
     """Nœud de garde-fou pour détecter les requêtes dangereuses."""
     
