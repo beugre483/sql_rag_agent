@@ -308,8 +308,6 @@ Ce projet est en version **v1.0.0-beta** —
 ---
 
 ## 🙏 Remerciements
-
-- **Anthropic** pour Claude (utilisé dans le développement)
 - **Mistral AI** pour le modèle LLM
 - **LangChain** pour LangGraph et LangSmith
 - **LlamaIndex** pour LlamaExtract et LlamaParse
