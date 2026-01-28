@@ -81,7 +81,6 @@ Génère une requête SQL brute basée strictement sur le schéma et les types c
 --- CONSIGNES DE SYNTAXE ---
 - TEXT : Utilise 'guillemets simples' et LIKE avec % (ex: region_nom_norm LIKE '%abidjan%').
 - INTEGER/REAL : Pas de guillemets (ex: score_voix > 1000).
-- LIMIT : Ajoute 'LIMIT 10' par défaut.
 - SQL PUR : Pas de texte explicatif, pas de blocs Markdown (```).
 - RÈGLES DE RECHERECHE INTELLIGENTE (IMPORTANT) ---
 De nombreuses villes ont deux circonscriptions : une 'COMMUNE' et une 'SOUS-PRÉFECTURE'.

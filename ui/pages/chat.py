@@ -3,12 +3,13 @@ from pathlib import Path
 import sys
 import pandas as pd
 import base64
+import os
 
 # Ajouter le dossier racine au path pour les imports
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(BASE_DIR))
 
-from src.agent.graph import build_agent_graph
+# --- NOTE : L'import du graph a été retiré d'ici ---
 
 def chat_page():
     """
@@ -17,18 +18,27 @@ def chat_page():
     st.header("Assistant Electoral IA")
     st.markdown("Posez vos questions sur les données électorales")
     
-    # Initialiser l'agent avec cache
-    @st.cache_resource
+    # --- LAZY IMPORT & INITIALISATION ---
+    @st.cache_resource(show_spinner="Patientez quelques instants ...")
     def get_agent():
+        # C'est ICI que l'import se fait, une fois que les clés sont chargées dans app.py
+        from src.agent.graph import build_agent_graph
         return build_agent_graph()
     
-    agent = get_agent()
-    
-    # Initialiser l'historique
+    # Tentative de chargement de l'agent
+    try:
+        agent = get_agent()
+    except Exception as e:
+        st.error("Impossible d'initialiser l'agent IA.")
+        st.warning(f"Détail de l'erreur : {e}")
+        st.info("💡 Vérifiez que vous avez bien entré vos clés API dans la barre latérale.")
+        return # On arrête l'exécution de la fonction ici si l'agent n'est pas prêt
+
+    # --- HISTORIQUE ---
     if "messages" not in st.session_state:
         st.session_state.messages = []
     
-    # --- FONCTION INTERNE POUR AFFICHER LES MESSAGES ---
+    # --- FONCTION D'AFFICHAGE ---
     def display_message(message):
         with st.chat_message(message["role"]):
             # 1. Texte
@@ -38,38 +48,44 @@ def chat_page():
             if message.get("chart"):
                 chart_info = message["chart"]
                 try:
-                    # Décodage de la chaîne base64 envoyée par Matplotlib
-                    img_bytes = base64.b64decode(chart_info["data"])
+                    # Gestion robuste du format base64
+                    data_str = chart_info.get("data", "") if isinstance(chart_info, dict) else chart_info
+                    img_bytes = base64.b64decode(data_str)
                     st.image(img_bytes, width="stretch")
                 except Exception as e:
-                    st.error(f"Erreur d'affichage du graphique : {e}")
+                    st.error(f"Erreur d'affichage du graphique")
             
             # 3. Données SQL (Tableau)
             if message.get("sql_results") is not None:
-                with st.expander("Voir les données brutes"):
-                    results = message["sql_results"]
-                    df = pd.DataFrame(results) if isinstance(results, list) else results
-                    st.dataframe(df, width="stretch")
+                # On évite d'afficher des listes vides
+                results = message["sql_results"]
+                if isinstance(results, list) and not results:
+                    pass
+                else:
+                    with st.expander("Voir les données brutes"):
+                        df = pd.DataFrame(results) if isinstance(results, list) else results
+                        st.dataframe(df, use_container_width=True)
 
-    # Afficher l'historique existant
+    # Affichage de l'historique
     for message in st.session_state.messages:
         display_message(message)
     
-    # --- INPUT UTILISATEUR ---
+    # --- INTERACTION UTILISATEUR ---
     if prompt := st.chat_input("Posez votre question ici..."):
-        # Ajouter et afficher le message utilisateur
+        # 1. Affichage User
         user_msg = {"role": "user", "content": prompt}
         st.session_state.messages.append(user_msg)
         with st.chat_message("user"):
             st.markdown(prompt)
         
-        # Réponse de l'assistant
+        # 2. Réponse Assistant
         with st.chat_message("assistant"):
             with st.spinner("Analyse des données en cours..."):
                 try:
                     # Préparation de l'état initial pour LangGraph
                     initial_state = {
                         "user_query": prompt,
+                        # On initialise les autres champs à None/Vide pour éviter les KeyError
                         "classification": None,
                         "sql_query": None,
                         "sql_results": [],
@@ -78,30 +94,32 @@ def chat_page():
                         "final_answer": None
                     }
                     
-                    # Invoquer l'agent (LangGraph)
+                    # Invoquer l'agent
                     result = agent.invoke(initial_state)
                     
-                    # Extraction des résultats
-                    final_answer = result.get("final_answer", "Désolé, je n'ai pas pu générer une réponse.")
+                    # Extraction sécurisée des résultats
+                    final_answer = result.get("final_answer", "Je n'ai pas trouvé de réponse.")
                     sql_results = result.get("sql_results")
-                    # Récupère l'image base64 depuis le node generate_chart
                     chart_data = result.get("chart_data") 
                     
-                    # Affichage immédiat du texte
+                    # --- AFFICHAGE LIVE ---
                     st.markdown(final_answer)
                     
-                    # Affichage immédiat du graphique si présent
-                    if chart_data and isinstance(chart_data, dict) and "data" in chart_data:
-                        img_bytes = base64.b64decode(chart_data["data"])
-                        st.image(img_bytes, width="stretch")
+                    if chart_data:
+                        try:
+                            data_str = chart_data.get("data", "") if isinstance(chart_data, dict) else chart_data
+                            img_bytes = base64.b64decode(data_str)
+                            st.image(img_bytes, width="stretch")
+                        except:
+                            pass # On ignore silencieusement les erreurs d'image en live
                     
-                    # Affichage immédiat du tableau si présent
-                    if sql_results is not None:
-                        with st.expander("Voir les données brutes"):
-                            df = pd.DataFrame(sql_results) if isinstance(sql_results, list) else sql_results
-                            st.dataframe(df, width="stretch")
+                    if sql_results:
+                         if isinstance(sql_results, list) and len(sql_results) > 0:
+                            with st.expander("Voir les données brutes"):
+                                df = pd.DataFrame(sql_results)
+                                st.dataframe(df, use_container_width=True)
                     
-                    # Sauvegarde dans l'historique
+                    # --- SAUVEGARDE HISTORIQUE ---
                     message_data = {
                         "role": "assistant",
                         "content": final_answer,
@@ -111,17 +129,16 @@ def chat_page():
                     st.session_state.messages.append(message_data)
                     
                 except Exception as e:
-                    import traceback
-                    error_details = traceback.format_exc()
-                    st.error(f"Erreur : {str(e)}")
-                    # On log l'erreur pour le debug mais on reste propre pour l'utilisateur
+                    # Gestion propre des erreurs pour l'utilisateur
+                    error_msg = f"Une erreur est survenue : {str(e)}"
+                    st.error(error_msg)
                     st.session_state.messages.append({
                         "role": "assistant", 
-                        "content": "Désolé, une erreur technique est survenue."
+                        "content": "Désolé, une erreur technique m'a empêché de répondre."
                     })
 
-    # --- BOUTON RESET ---
+    # --- RESET ---
     st.sidebar.divider()
-    if st.sidebar.button("Nouvelle conversation"):
+    if st.sidebar.button("🗑️ Nouvelle conversation"):
         st.session_state.messages = []
         st.rerun()

@@ -29,7 +29,7 @@ def generate_clarification_node(state: AgentState) -> Command:
     TACHE : 
     Rédige une réponse courte et polie pour :
     1. Reformuler ce que l'utilisateur cherche.
-    2. Expliquer précisément ce qui manque (lieu, nom de candidat, etc.).
+    2. Expliquer précisément ce qui manque (parfois cest la nature precise d'une circonscription, par exemple il ya agboville commune ou agboville circonscription mais l'utilistaur ne dit rien).
     3. Lui poser une question directe pour l'aider à préciser.
     
     RECO : Ne sois pas robotique. Utilise le contexte de sa question. Réponds en français

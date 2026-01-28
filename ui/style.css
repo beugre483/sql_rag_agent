@@ -1,118 +1,129 @@
-/* Amélioration de la visibilité - Thème clair moderne */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
-/* Sidebar */
+/* ==================== */
+/* 1. RESET GLOBAL & FOND */
+/* ==================== */
+.stApp {
+    background-color: #050505 !important; /* Noir profond */
+    color: #FFFFFF !important;
+    font-family: 'Space Grotesk', sans-serif !important;
+}
+
+/* Sidebar : On force un noir légèrement bleuté et OPAQUE pour couvrir le blanc */
 [data-testid="stSidebar"] {
-    background-color: #f8f9fa !important;
+    background-color: #0a0a0f !important; 
+    border-right: 1px solid rgba(99, 102, 241, 0.2) !important;
 }
 
-[data-testid="stSidebar"] .css-1d391kg {
-    background-color: #f8f9fa !important;
+/* S'assure que le contenu de la sidebar est aussi sur fond sombre */
+[data-testid="stSidebar"] > div {
+    background-color: #0a0a0f !important;
 }
 
-/* Titre de la sidebar */
-[data-testid="stSidebar"] h1 {
-    color: #1a1a1a !important;
-    font-weight: 700 !important;
-    font-size: 1.8rem !important;
-    margin-bottom: 1.5rem !important;
+/* Titres et textes dans la sidebar */
+[data-testid="stSidebar"] h1, 
+[data-testid="stSidebar"] h2, 
+[data-testid="stSidebar"] h3, 
+[data-testid="stSidebar"] label, 
+[data-testid="stSidebar"] span, 
+[data-testid="stSidebar"] p {
+    color: #E2E8F0 !important;
 }
 
-/* Navigation - Radio buttons */
-[data-testid="stSidebar"] label {
-    color: #2c3e50 !important;
-    font-size: 1.1rem !important;
-    font-weight: 500 !important;
+/* ==================== */
+/* 2. NAVIGATION (Radio Buttons Style "Pills") */
+/* ==================== */
+/* Cache le rond moche des boutons radio */
+[data-testid="stSidebar"] [data-baseweb="radio"] input {
+    display: none;
 }
 
-/* Radio button sélectionné */
+/* Style des options non sélectionnées */
 [data-testid="stSidebar"] [data-baseweb="radio"] > div {
-    background-color: #ffffff !important;
-    border: 2px solid #e0e0e0 !important;
+    background-color: transparent !important;
+    color: #94A3B8 !important; /* Gris clair */
+    margin-bottom: 8px !important;
+    padding: 10px !important;
     border-radius: 8px !important;
-    padding: 0.5rem !important;
-    margin: 0.3rem 0 !important;
+    transition: all 0.2s ease !important;
+    border: 1px solid transparent !important;
 }
 
+/* Survol */
 [data-testid="stSidebar"] [data-baseweb="radio"] > div:hover {
-    background-color: #e3f2fd !important;
-    border-color: #2196F3 !important;
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    color: #FFFFFF !important;
 }
 
-/* Texte du radio button */
-[data-testid="stSidebar"] [data-baseweb="radio"] label span {
-    color: #1a1a1a !important;
+/* Option SÉLECTIONNÉE (Active) */
+[data-testid="stSidebar"] [data-baseweb="radio"] [aria-checked="true"] {
+    background: linear-gradient(90deg, rgba(99, 102, 241, 0.2) 0%, rgba(99, 102, 241, 0.05) 100%) !important;
+    color: #FFFFFF !important;
+    border: 1px solid #6366F1 !important; /* Bordure violet néon */
     font-weight: 600 !important;
+    box-shadow: 0 0 15px rgba(99, 102, 241, 0.2) !important;
 }
 
-/* Zone principale */
-.main {
-    background-color: #ffffff !important;
+/* ==================== */
+/* 3. INPUTS (Champs de texte API Key) */
+/* ==================== */
+.stTextInput input[type="password"], .stTextInput input[type="text"] {
+    background-color: #13131A !important; /* Fond très sombre */
+    color: #FFFFFF !important;
+    border: 1px solid #2D2D3A !important;
+    border-radius: 8px !important;
 }
 
+.stTextInput input:focus {
+    border-color: #6366F1 !important;
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2) !important;
+}
+
+/* ==================== */
+/* 4. BOUTONS (Gradients) */
+/* ==================== */
+.stButton button {
+    background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    transition: transform 0.1s !important;
+}
+
+.stButton button:hover {
+    transform: scale(1.02) !important;
+    box-shadow: 0 4px 20px rgba(79, 70, 229, 0.4) !important;
+}
+
+/* ==================== */
+/* 5. ELEMENTS UI DIVERS */
+/* ==================== */
 /* Titres principaux */
-h1, h2, h3, h4, h5, h6 {
-    color: #1a1a1a !important;
-    font-weight: 700 !important;
+h1, h2, h3 {
+    color: #FFFFFF !important;
+    letter-spacing: -0.02em !important;
 }
 
-/* Texte normal */
-p, span, div {
-    color: #2c3e50 !important;
-}
-
-/* Markdown */
-.stMarkdown {
-    color: #2c3e50 !important;
+/* Expanders (Accordeons) */
+[data-testid="stExpander"] {
+    background-color: #0E0E12 !important;
+    border: 1px solid #2D2D3A !important;
+    border-radius: 12px !important;
 }
 
 /* Dataframes */
 [data-testid="stDataFrame"] {
-    border: 1px solid #e0e0e0 !important;
-    border-radius: 8px !important;
+    background-color: #0E0E12 !important;
+    border: 1px solid #2D2D3A !important;
 }
 
-/* Selectbox */
-[data-baseweb="select"] {
-    background-color: #ffffff !important;
-    border: 2px solid #e0e0e0 !important;
-    border-radius: 8px !important;
+/* Messages du Chat */
+[data-testid="stChatMessage"] {
+    background-color: #0E0E12 !important;
+    border: 1px solid #2D2D3A !important;
 }
 
-[data-baseweb="select"] span {
-    color: #1a1a1a !important;
-    font-weight: 500 !important;
-}
-
-/* Header */
-header {
-    background-color: #ffffff !important;
-}
-
-/* Section "Navigation" dans la sidebar */
-[data-testid="stSidebar"] p {
-    color: #1a1a1a !important;
-    font-weight: 600 !important;
-    font-size: 0.9rem !important;
-    text-transform: uppercase !important;
-    letter-spacing: 0.05em !important;
-    margin-bottom: 1rem !important;
-}
-
-/* Amélioration du contraste général */
-* {
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-}
-
-/* Hover sur les éléments interactifs */
-button:hover, [role="button"]:hover {
-    opacity: 0.9 !important;
-    transform: scale(1.02) !important;
-    transition: all 0.2s ease !important;
-}
-
-/* Accent color pour les éléments sélectionnés */
-[aria-checked="true"] {
-    color: #2196F3 !important;
-    font-weight: 700 !important;
+[data-testid="stChatMessage"][data-testid="user"] {
+    background-color: #13131A !important;
 }
