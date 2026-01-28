@@ -65,7 +65,7 @@ ElectCI Agent repose sur une architecture d'agent intelligent orchestrée par **
 ![Architecture LangGraph](./docs/images/architecture_langgraph.png)
 *Graphe complet d'orchestration de l'agent avec LangGraph - Chaque nœud représente une étape du traitement*
 
-### Vue Simplifiée du Flux
+
 
 
 ```
@@ -303,13 +303,11 @@ Les contributions sont les bienvenues ! Pour contribuer :
 ---
 
 
-Ce projet est en version **v1.0.0-beta** — 
+Ce projet est en version **v1.0.0 — 
 
 ---
 
-## 🙏 Remerciements
-
-- **Anthropic** pour Claude (utilisé dans le développement)
+##  Remerciements
 - **Mistral AI** pour le modèle LLM
 - **LangChain** pour LangGraph et LangSmith
 - **LlamaIndex** pour LlamaExtract et LlamaParse
