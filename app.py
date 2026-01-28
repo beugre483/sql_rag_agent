@@ -25,65 +25,62 @@ def load_css():
 
 load_css()
 
+# ... imports ...
+
 def handle_api_keys():
     """
-    Affiche un formulaire de connexion.
-    Mistral ET LlamaCloud sont obligatoires.
+    Gère l'authentification et active LangSmith.
     """
-    
-    # Si l'utilisateur est déjà validé, on sort
-    if st.session_state.get("authenticated", False):
-        return True
-
-    # Tentative de récupération automatique (si secrets.toml existe)
+    # 1. Récupération des secrets (si fichier local secrets.toml existant)
     try:
         secrets = dict(st.secrets)
     except (FileNotFoundError, Exception):
         secrets = {}
 
-    # Si les clés sont déjà dans les secrets (Cloud), on valide silencieusement
-    if "MISTRAL_API_KEY" in secrets and "LLAMA_CLOUD_API_KEY" in secrets:
-        os.environ["MISTRAL_API_KEY"] = secrets["MISTRAL_API_KEY"]
-        os.environ["LLAMA_CLOUD_API_KEY"] = secrets["LLAMA_CLOUD_API_KEY"]
+    # Variables pour stocker les clés trouvées
+    mistral = secrets.get("MISTRAL_API_KEY")
+    llama = secrets.get("LLAMA_CLOUD_API_KEY")
+    langsmith = secrets.get("LANGCHAIN_API_KEY")
+
+    # 2. Si on n'a pas les clés dans les secrets, on affiche le formulaire
+    if not (mistral and llama):
+        with st.sidebar:
+            st.header("🔐 Authentification")
+            with st.form("login_form"):
+                mistral_input = st.text_input("Clé Mistral", type="password")
+                llama_input = st.text_input("Clé Llama Cloud", type="password")
+                langsmith_input = st.text_input("Clé LangSmith (Optionnel)", type="password")
+                
+                if st.form_submit_button("Valider"):
+                    if mistral_input and llama_input:
+                        # On met à jour les variables avec ce que l'user a tapé
+                        mistral = mistral_input
+                        llama = llama_input
+                        if langsmith_input:
+                            langsmith = langsmith_input
+                        st.rerun()
+                    else:
+                        st.error("Mistral et Llama Cloud sont obligatoires.")
+                        return False
+            return False
+
+    # 3. INJECTION DANS L'ENVIRONNEMENT (C'est l'étape CRUCIALE)
+    if mistral and llama:
+        os.environ["MISTRAL_API_KEY"] = mistral
+        os.environ["LLAMA_CLOUD_API_KEY"] = llama
         
-        if "LANGCHAIN_API_KEY" in secrets:
-            os.environ["LANGCHAIN_API_KEY"] = secrets["LANGCHAIN_API_KEY"]
-            os.environ["LANGCHAIN_TRACING_V2"] = "true"
+        # --- ACTIVATION DE LANGSMITH ---
+        # Si une clé LangSmith est trouvée (dans secrets ou input)
+        if langsmith:
+            os.environ["LANGCHAIN_API_KEY"] = langsmith
+            os.environ["LANGCHAIN_TRACING"] = "true"  
+            os.environ["LANGCHAIN_PROJECT"] = "My First App" 
+            
+            # st.sidebar.success("✅ LangSmith activé !") 
         
         st.session_state["authenticated"] = True
         return True
 
-    # SINON : Affichage du formulaire OBLIGATOIRE dans la Sidebar
-    with st.sidebar:
-        st.header("🔐 Authentification")
-        st.info("Veuillez entrer vos clés pour continuer.")
-        
-        with st.form("login_form"):
-            mistral_key = st.text_input("Clé Mistral API (Obligatoire)", type="password")
-            llama_key = st.text_input("Clé Llama Cloud (Obligatoire)", type="password")
-            langsmith_key = st.text_input("Clé LangSmith (Optionnel)", type="password")
-            
-            submitted = st.form_submit_button("Valider")
-            
-            if submitted:
-                # VÉRIFICATION STRICTE : Les deux clés sont exigées
-                if not mistral_key or not llama_key:
-                    st.error("❌ Vous devez entrer la clé Mistral ET la clé Llama Cloud.")
-                else:
-                    # Injection dans l'environnement
-                    os.environ["MISTRAL_API_KEY"] = mistral_key
-                    os.environ["LLAMA_CLOUD_API_KEY"] = llama_key
-                    
-                    if langsmith_key:
-                        os.environ["LANGCHAIN_API_KEY"] = langsmith_key
-                        os.environ["LANGCHAIN_TRACING_V2"] = "true"
-                        os.environ["LANGCHAIN_PROJECT"] = "Challenge Artefact Demo"
-                    
-                    # Validation
-                    st.session_state["authenticated"] = True
-                    st.success("Clés valides.")
-                    st.rerun()
-    
     return False
 
 # --- 3. EXÉCUTION PRINCIPALE ---
@@ -99,7 +96,7 @@ selected_page = sidebar_menu()
 if selected_page == "🏠 Accueil":
     st.title("Bienvenue")
     st.markdown("""
-    ## Interface d'exploration des données électorales
+    ## Interface d'exploration des données d'elections legislatives ivoiriennes 
     
     Cette application vous permet de :
     

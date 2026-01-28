@@ -30,7 +30,7 @@ def guardrail_node(state: AgentState) -> Command:
         "modifie", "modifier", "change", "changer",
         "insère", "insérer", "ajoute", "ajouter",
         "crée", "créer", "altère", "truncate", "drop",
-        "rm ", "rm -rf", "pirate", "hack","ignore"
+        "rm ", "rm -rf", "pirate", "hack","ignore","enlève"
     ]
     
     user_query = state.get("user_query", "").lower()
