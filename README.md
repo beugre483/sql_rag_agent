@@ -319,4 +319,4 @@ Ce projet est en version **v1.0.0-beta** —
 
 **Construit avec ❤️ pour faciliter l'accès aux données électorales ivoiriennes**
 
-[🚀 Essayer l'app](https://sqlragagent-iwdpwhwiqupwjpuk4mfqec.streamlit.app/) | [📖 Documentation Technique](https://github.com/beugre483/sql_rag_agent/blob/main/Document_artefact_conception.pdf) | [⭐ GitHub](https://github.com/beugre483/sql_rag_agent)
+[🚀 Essayer l'app](https://sqlragagent-iwdpwhwiqupwjpuk4mfqec.streamlit.app/) | [📖  | [⭐ GitHub](https://github.com/beugre483/sql_rag_agent)
