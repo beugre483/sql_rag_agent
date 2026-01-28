@@ -29,20 +29,20 @@ load_css()
 
 def handle_api_keys():
     """
-    Gère l'authentification et active LangSmith.
+    Gère l'authentification avec persistance des données.
     """
-    # 1. Récupération des secrets (si fichier local secrets.toml existant)
+    # 1. On cherche d'abord dans les SECRETS (fichier .streamlit/secrets.toml)
     try:
         secrets = dict(st.secrets)
     except (FileNotFoundError, Exception):
         secrets = {}
 
-    # Variables pour stocker les clés trouvées
-    mistral = secrets.get("MISTRAL_API_KEY")
-    llama = secrets.get("LLAMA_CLOUD_API_KEY")
-    langsmith = secrets.get("LANGCHAIN_API_KEY")
+  
+    mistral = secrets.get("MISTRAL_API_KEY") or st.session_state.get("MISTRAL_API_KEY")
+    llama = secrets.get("LLAMA_CLOUD_API_KEY") or st.session_state.get("LLAMA_CLOUD_API_KEY")
+    langsmith = secrets.get("LANGCHAIN_API_KEY") or st.session_state.get("LANGCHAIN_API_KEY")
 
-    # 2. Si on n'a pas les clés dans les secrets, on affiche le formulaire
+    # 3. Si on n'a toujours pas les clés, on affiche le formulaire
     if not (mistral and llama):
         with st.sidebar:
             st.header("🔐 Authentification")
@@ -53,30 +53,33 @@ def handle_api_keys():
                 
                 if st.form_submit_button("Valider"):
                     if mistral_input and llama_input:
-                        # On met à jour les variables avec ce que l'user a tapé
-                        mistral = mistral_input
-                        llama = llama_input
+                        # --- CORRECTION ICI ---
+                        # On sauvegarde dans le session_state pour qu'elles survivent au rerun
+                        st.session_state["MISTRAL_API_KEY"] = mistral_input
+                        st.session_state["LLAMA_CLOUD_API_KEY"] = llama_input
+                        
                         if langsmith_input:
-                            langsmith = langsmith_input
-                        st.rerun()
+                            st.session_state["LANGCHAIN_API_KEY"] = langsmith_input
+                        
+                        st.success("Connexion réussie !")
+                        st.rerun() # Maintenant, au rechargement, les clés seront trouvées à l'étape 2
                     else:
                         st.error("Mistral et Llama Cloud sont obligatoires.")
-                        return False
+                        
+            # On retourne False tant que le formulaire est affiché
             return False
 
-    # 3. INJECTION DANS L'ENVIRONNEMENT (C'est l'étape CRUCIALE)
+    # 4. INJECTION DANS L'ENVIRONNEMENT
+    # Si on arrive ici, c'est qu'on a les clés (soit via secrets, soit via session_state)
     if mistral and llama:
         os.environ["MISTRAL_API_KEY"] = mistral
         os.environ["LLAMA_CLOUD_API_KEY"] = llama
         
-        # --- ACTIVATION DE LANGSMITH ---
-        # Si une clé LangSmith est trouvée (dans secrets ou input)
+        # Activation LangSmith
         if langsmith:
             os.environ["LANGCHAIN_API_KEY"] = langsmith
-            os.environ["LANGCHAIN_TRACING"] = "true"  
-            os.environ["LANGCHAIN_PROJECT"] = "My First App" 
-            
-            # st.sidebar.success("✅ LangSmith activé !") 
+            os.environ["LANGCHAIN_TRACING_V2"] = "true" # Note: V2 est préférable à TRACING tout court
+            os.environ["LANGCHAIN_PROJECT"] = "Elections CI App"
         
         st.session_state["authenticated"] = True
         return True
