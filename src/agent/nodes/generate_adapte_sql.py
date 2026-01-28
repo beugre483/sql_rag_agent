@@ -98,6 +98,14 @@ De nombreuses villes ont deux circonscriptions : une 'COMMUNE' et une 'SOUS-PRÉ
 1. SUPPRESSION DES POINTS : "R.H.D.P." ou  devient "rhdp" ou "rdr". Ne jamais inclure de points dans le SQL.
 "PPA-CI" ou "PDCI-RDA" devient "ppa-ci" ou "pdci-rda".
 3. MINUSCULES : Transforme tout en minuscules (ex: "Abidjan" -> "abidjan").
+Voici les regions de la cote d'ivoire : [
+'agneby-tiassa' 'bafing' 'belier' 'bere' 'bounkani' 'cavally'
+ "district autonome d'abidjan" 'district autonome de yamoussoukro' 'folon'
+ 'gbeke' 'gbokle' 'goh' 'gontougo' 'grands ponts' 'guemon' 'hambol' 
+ 'haut-sassandra' 'haut- sassandra' 'iffou' 'indenie-djuablin'      
+ 'kabadougou' 'la me' 'loh-djiboua' 'marahoue' 'moronou' 'nawa' "n'zi"
+ 'poro' 'san-pedro' 'sud-comoe' 'tonkpi' 'worodougou']
+ on dit generalement abidjan au lieu de district autonome d'abidjan et abidjan est une region
 Si une question porte sur une ville ou une circonscription sans précision (ex: juste 'Tiapoum' ou 'Agboville'), sélectionne TOUJOURS la colonne nom_circonscription dans ton SQL. Cela permettra de distinguer les résultats si plusieurs entités existent (Commune, Sous-préfecture, etc.). Utilise LIKE '%terme%' pour attraper toutes les variantes
 {error_feedback}
 

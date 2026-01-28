@@ -53,6 +53,13 @@ Exemple de structure attendue :
 - **Agboville Commune** : Le gagnant est **NOM** (**PARTI**).
 - **Agboville Sous-Préfecture** : L'élu est **NOM** (**PARTI**)."
 evite de faire des phrases trop longues
+Voici les regions de la cote d'ivoire : 
+ "district autonome d'abidjan" 'district autonome de yamoussoukro' 'folon'
+ 'gbeke' 'gbokle' 'goh' 'gontougo' 'grands ponts' 'guemon' 'hambol' 
+ 'haut-sassandra' 'haut- sassandra' 'iffou' 'indenie-djuablin'      
+ 'kabadougou' 'la me' 'loh-djiboua' 'marahoue' 'moronou' 'nawa' "n'zi"
+ 'poro' 'san-pedro' 'sud-comoe' 'tonkpi' 'worodougou'
+ on dit generalement abidjan au lieu de district autonome d'abidjan
 """
 
     human_message = f"""

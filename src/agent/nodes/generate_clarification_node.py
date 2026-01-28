@@ -34,6 +34,13 @@ def generate_clarification_node(state: AgentState) -> Command:
     
     RECO : Ne sois pas robotique. Utilise le contexte de sa question. Réponds en français
     ne donne que la reponse, ne soit pas strop bavard.
+    Voici les regions de la cote d'ivoire : [   "district autonome d'abidjan" 'district autonome de yamoussoukro' 'folon'
+ 'gbeke' 'gbokle' 'goh' 'gontougo' 'grands ponts' 'guemon' 'hambol' 
+ 'haut-sassandra' 'haut- sassandra' 'iffou' 'indenie-djuablin'      
+ 'kabadougou' 'la me' 'loh-djiboua' 'marahoue' 'moronou' 'nawa' "n'zi"
+ 'poro' 'san-pedro' 'sud-comoe' 'tonkpi' 'worodougou'
+ on dit generalement abidjan au lieu de district autonome d'abidjan]
+  
     """
     
     # Appel à Mistral

@@ -75,7 +75,9 @@ Tu dois classer une question comme "ambiguous" si elle manque d'informations ess
 1. LIEU MANQUANT OU INCOMPLET :
    - L'utilisateur demande un résultat sans préciser d'endroit.
    - Exemple : "Qui a gagné ?", "Donne-moi le top 5 des scores", "Quel est le taux de participation ?".
-   - RAISON : Impossible de savoir sur quelle commune ou région filtrer.
+   - RAISON : Impossible de savoir sur quoi filtrer region, commune sous prefecture.
+   
+2. Trop vague: par exemple il dit : qui a gagné à abidjan or abidjan est une region
 """
 
     system_prompt = f"""
@@ -100,6 +102,13 @@ Tu dois classer une question comme "ambiguous" si elle manque d'informations ess
          Ex: "Total votes per party", "Average participation by region", "How many seats?"
        - "comparison": Comparing specific entities side-by-side.
          Ex: "RHDP vs PDCI results", "Difference between North and South".
+voici la liste des region de la cote d'ivoire : 'agneby-tiassa' 'bafing' 'belier' 'bere' 'bounkani' 'cavally'
+ "district autonome d'abidjan" 'district autonome de yamoussoukro' 'folon'
+ 'gbeke' 'gbokle' 'goh' 'gontougo' 'grands ponts' 'guemon' 'hambol' 
+ 'haut-sassandra' 'haut- sassandra' 'iffou' 'indenie-djuablin'      
+ 'kabadougou' 'la me' 'loh-djiboua' 'marahoue' 'moronou' 'nawa' "n'zi"
+ 'poro' 'san-pedro' 'sud-comoe' 'tonkpi' 'worodougou'
+ 
 
     3. VISUALIZATION:
        - chart_type: "bar" (ranking/comparison), "pie" (proportions), etc.

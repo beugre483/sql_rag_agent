@@ -122,6 +122,7 @@ elif selected_page == "🤖 Chat IA":
     else:
         st.warning("🔒 Accès verrouillé")
         st.info("⬅️ Vous devez entrer vos clés dans la barre latérale pour utiliser cette fonctionnalité.")
+        
 
 elif selected_page == "📁 Voir les données":
     view_data_page()

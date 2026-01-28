@@ -17,6 +17,16 @@ def chat_page():
     """
     st.header("Assistant Electoral IA")
     st.markdown("Posez vos questions sur les données électorales")
+    st.warning("""
+⚠️ **Important pour une meilleure expérience :**
+
+Pour des résultats plus précis, veuillez toujours préciser :
+- La **nature** de l'élément recherché (région, circonscription, parti, candidat)
+**Exemples de bonnes questions :**
+- ✅ "Combien de sièges a gagné le parti RHDP ?"
+- ✅ "Quel est le taux de participation dans la région de Gbêkê ?"
+    """)
+
     
     # --- LAZY IMPORT & INITIALISATION ---
     @st.cache_resource(show_spinner="Patientez quelques instants ...")
