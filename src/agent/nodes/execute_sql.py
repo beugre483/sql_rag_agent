@@ -5,6 +5,7 @@ from pathlib import Path
 from ..state import AgentState
 from src.database.connection import DatabaseConnection
 from langsmith import traceable
+from langgraph.graph import END 
 
 @traceable(name="sql_execution")
 def execute_sql_node(state: AgentState) -> Command[Literal["determine_chart_intent"]]:
@@ -14,9 +15,10 @@ def execute_sql_node(state: AgentState) -> Command[Literal["determine_chart_inte
         return Command(
             update={
                 "errors": ["Aucune requête à exécuter."],  # ✅ UNE SEULE erreur
-                "sql_results": []
+                "sql_results": [],
+                "final_answer": "Désolé, je n'ai pas pu exécuter votre requête. Veuillez reformuler votre question s'il vous plaît."
             },
-            goto="determine_chart_intent"
+            goto=END
         )
 
     print(f"\n[Execute SQL] Exécution de : {query}")
@@ -49,7 +51,8 @@ def execute_sql_node(state: AgentState) -> Command[Literal["determine_chart_inte
         return Command(
             update={
                 "errors": [f"Erreur d'exécution : {str(e)}"],  # ✅ UNE SEULE erreur
-                "sql_results": []
+                "sql_results": [],
+                "final_answer": "Désolé, je n'ai pas pu exécuter votre requête. Veuillez reformuler votre question s'il vous plaît."
             },
-            goto="determine_chart_intent"
+            goto=END
         )

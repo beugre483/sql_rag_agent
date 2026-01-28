@@ -88,7 +88,7 @@ De nombreuses villes ont deux circonscriptions : une 'COMMUNE' et une 'SOUS-PRÉ
 1. AMBIGUÏTÉ : Si l'utilisateur dit juste "Agboville" ou "Divo", cherche les deux avec :
    WHERE nom_circonscription_norm LIKE '%agboville%'
    
-2. PRÉCISION COMMUNE : Si l'utilisateur dit "Ville", "Commune" ou "Cne", cherche :
+2. PRÉCISION COMMUNE : Si l'utilisateur dit "Ville", "Commune", cherche :
    WHERE nom_circonscription_norm LIKE '%agboville%commune%'
    
 3. PRÉCISION SOUS-PRÉFECTURE : Si l'utilisateur dit "S/P", "SP", "Village" ou "Sous-préfecture", cherche :
@@ -96,7 +96,7 @@ De nombreuses villes ont deux circonscriptions : une 'COMMUNE' et une 'SOUS-PRÉ
    
 "N'utilise jamais l'opérateur '=' pour les noms de lieux ou de personnes. Utilise toujours l'opérateur 'LIKE' avec des jokers '%' de chaque côté (ex: LIKE '%nom%') sur les colonnes suffixées par '_norm
 1. SUPPRESSION DES POINTS : "R.H.D.P." ou  devient "rhdp" ou "rdr". Ne jamais inclure de points dans le SQL.
-2. SUPPRESSION DES TIRETS : "PPA-CI" ou "PDCI-RDA" devient "ppa-ci" ou "pdci-rda".
+"PPA-CI" ou "PDCI-RDA" devient "ppa-ci" ou "pdci-rda".
 3. MINUSCULES : Transforme tout en minuscules (ex: "Abidjan" -> "abidjan").
 Si une question porte sur une ville ou une circonscription sans précision (ex: juste 'Tiapoum' ou 'Agboville'), sélectionne TOUJOURS la colonne nom_circonscription dans ton SQL. Cela permettra de distinguer les résultats si plusieurs entités existent (Commune, Sous-préfecture, etc.). Utilise LIKE '%terme%' pour attraper toutes les variantes
 {error_feedback}
