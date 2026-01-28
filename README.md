@@ -1,4 +1,4 @@
-# ElectCI Agent 🗳️
+
 ### Intelligence Artificielle pour l'Analyse des Élections Législatives Ivoiriennes
 
 ![Python](https://img.shields.io/badge/python-3.11.9-blue)
