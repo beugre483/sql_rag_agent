@@ -10,7 +10,7 @@
 
 ---
 
-## 🚀 Démo Live
+## Démo Live
 
 - **Application Streamlit** : [sqlragagent-iwdpwhwiqupwjpuk4mfqec.streamlit.app](https://sqlragagent-iwdpwhwiqupwjpuk4mfqec.streamlit.app/)
 - **Monitoring LangSmith** : 
@@ -20,42 +20,42 @@
 
 ---
 
-## ✨ Ce que vous pouvez faire
+##  Ce que vous pouvez faire
 
 Posez des questions en français sur les élections législatives et obtenez instantanément :
 
-### 1. 📊 Analyses Quantitatives
+### 1.  Analyses Quantitatives
 ```
 "Combien de sièges a gagné le RHDP ?"
 "Quel est le taux de participation à Bouaké ?"
 ```
 
-### 2. 📈 Visualisations Automatiques
+### 2. Visualisations Automatiques
 L'agent génère automatiquement des graphiques adaptés :
 - Diagrammes en barres pour les comparaisons
 - Graphiques circulaires pour les répartitions
 - Histogrammes pour les distributions
 
-### 3. 🎯 Réponses Précises en SQL
+### 3.  Réponses Précises en SQL
 Conversion automatique de vos questions en requêtes SQL sécurisées, exécutées sur une base de données structurée.
 
 ---
 
-## 🎯 Pourquoi  cette plateforme ?
+## Pourquoi  cette plateforme ?
 
-### ✅ Pour les Citoyens
+###  Pour les Citoyens
 - **Accès simplifié** — Pas besoin de parcourir des PDF
 - **Réponses instantanées** — Obtenez l'information en quelques secondes
 - **Visualisations claires** — Comprenez les tendances en un coup d'œil
 
-### ✅ Pour les Développeurs
+###  Pour les Développeurs
 - **Architecture moderne** — LangGraph pour orchestration robuste
 - **Code maintenable** — Structure modulaire et bien documentée
 - **Observabilité complète** — Traçage avec LangSmith
 
 ---
 
-## 🏗️ Architecture
+##  Architecture
 
 ElectCI Agent repose sur une architecture d'agent intelligent orchestrée par **LangGraph** :
 
@@ -71,24 +71,24 @@ ElectCI Agent repose sur une architecture d'agent intelligent orchestrée par **
 
 ### Composants Clés
 
-**🧠 Agent SQL Intelligent**
+**Agent SQL Intelligent**
 - Classification automatique des intentions
 - Génération de requêtes SQL sécurisées (SELECT uniquement)
 - Few-shot dynamique avec base de requêtes validées
 
-**🔒 Sécurité Multi-Couches**
+** Sécurité Multi-Couches**
 - Garde-fou déterministe (détection de mots-clés interdits)
 - Validation syntaxique et sémantique
 - Colonnes normalisées pour robustesse orthographique
 
-**📊 Pipeline d'Extraction Intelligent**
+** Pipeline d'Extraction Intelligent**
 - Extraction avec **LlamaExtract** (mode PER_TABLE_ROW)
 - Base de données SQLite normalisée
 - Vues SQL pré-calculées pour réduire la complexité
 
 ---
 
-## 🚀 Installation & Démarrage
+##  Installation & Démarrage
 
 ### Prérequis
 - Python 3.11.9
@@ -144,15 +144,15 @@ L'application sera accessible sur `http://localhost:8501`
 
 ---
 
-## 📖 Comment ça marche ?
+##  Comment ça marche ?
 
 ### 1. Extraction des Données (LlamaExtract)
 
 Les résultats électoraux sont extraits des PDF officiels avec **LlamaExtract** en mode `PER_TABLE_ROW` :
-- ✅ Extraction exhaustive ligne par ligne
-- ✅ Préservation de la structure hiérarchique (région → circonscription → candidat)
-- ✅ Typage strict avec schéma Pydantic
-- ✅ Contournement des biais positionnels des LLM
+- Extraction exhaustive ligne par ligne
+-  Préservation de la structure hiérarchique (région → circonscription → candidat)
+-  Typage strict avec schéma Pydantic
+-  Contournement des biais positionnels des LLM
 
 ### 2. Base de Données Normalisée
 
@@ -187,7 +187,7 @@ Chaque requête suit un workflow contrôlé :
 
 ---
 
-## 🎨 Exemples de Questions
+##  Exemples de Questions
 
 ### Requêtes d'Agrégation
 ```
@@ -229,7 +229,7 @@ Chaque requête suit un workflow contrôlé :
 
 ---
 
-## ⚠️ Limitations Actuelles
+## Limitations Actuelles
 
 ### Connues et Acceptées
 - **Pas de mémoire conversationnelle** : L'agent traite chaque question indépendamment (pas de contexte multi-tours)
@@ -244,7 +244,7 @@ Chaque requête suit un workflow contrôlé :
 
 ---
 
-## 📊 Observabilité & Monitoring
+## Observabilité & Monitoring
 
 ### Traçage avec LangSmith
 
@@ -281,7 +281,7 @@ sql_rag_agent/
 
 ---
 
-## 🤝 Contribution
+## Contribution
 
 Les contributions sont les bienvenues ! Pour contribuer :
 
@@ -293,7 +293,7 @@ Les contributions sont les bienvenues ! Pour contribuer :
 
 ---
 
-## 📧 Contact & Support
+##  Contact & Support
 
 - **Auteur** : Beugre Niamba Okess
 - **GitHub** : [@beugre483](https://github.com/beugre483)
