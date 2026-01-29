@@ -28,7 +28,6 @@ Posez des questions en français sur les élections législatives et obtenez ins
 ```
 "Combien de sièges a gagné le RHDP ?"
 "Quel est le taux de participation à Bouaké ?"
-"Qui est arrivé en tête dans la circonscription de Yamoussoukro ?"
 ```
 
 ### 2. 📈 Visualisations Automatiques
