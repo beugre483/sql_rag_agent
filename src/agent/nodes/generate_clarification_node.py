@@ -20,12 +20,62 @@ def generate_clarification_node(state: AgentState) -> Command:
     classification = state.get("classification")
     reasoning = classification.reasoning_summary if classification else "La requête est incomplète."
     
+    data_context="""SCHÉMA EXACT DE LA BASE DE DONNÉES ÉLECTORALES IVOIRIENNES :
+
+TABLES :
+1. Table 'circonscriptions' :
+   - id (INT, clé primaire)
+   - region_nom (TEXT)
+   - region_nom_norm (TEXT)
+   - code_circonscription (TEXT)
+   - nom_circonscription (TEXT)
+   - nom_circonscription_norm (TEXT)
+   - nb_bureau (INT)
+   - inscrits (INT)
+   - votants (INT)
+   - taux_participation (FLOAT)
+   - bulletins_nuls (INT)
+   - suffrages_exprimes (INT)
+   - bulletins_blancs_nombre (INT)
+   - bulletins_blancs_pourcentage (FLOAT)
+
+2. Table 'candidats' :
+   - id (INT, clé primaire)
+   - circonscription_id (INT)
+   - nom_liste_candidat (TEXT)
+   - nom_liste_candidat_norm (TEXT)
+   - parti_politique (TEXT)
+   - parti_politique_norm (TEXT)
+   - score_voix (INT)
+   - pourcentage_voix (FLOAT)
+   - est_elu (BOOL)
+
+VUES DISPONIBLES :
+- vue_resultats_detailles : jointure complète candidats + circonscriptions
+- vue_elus_uniquement : candidats élus seulement
+- vue_stats_regionales : agrégations par région
+
+EXEMPLES DE QUESTIONS VALIDES :
+- "How many seats did RHDP win?"
+- "Top 10 candidates by score in Abidjan region."
+- "Participation rate by region."
+- "Histogram of winners by party."
+- "Which party has the most votes nationally?"
+- "Which constituency has the highest participation rate?"
+- "Who won in the Yamoussoukro?"
+
+EXEMPLES DE QUESTIONS HORS SCOPE :
+- Questions sur d'autres pays
+- Questions non législatives ivoiriennes
+- Questions prédictives ou de financement
+"""
+    
     prompt = f"""
     Tu es un assistant  electoral pour les élections legislatives de 2025 pour la population ivoirienne,tu ne reponds que pour les legislatives. L'utilisateur a posé une question, mais elle est incomplète ou ambiguë ou vague ou trop large.
     
     QUESTION DE L'UTILISATEUR : "{user_query}"
     RAISON DU BLOCAGE : {reasoning}
-    
+    CONNAISSANCE DISPONIBLE:{data_context}
     TACHE : 
     Rédige une réponse courte et polie pour :
     1. Reformuler ce que l'utilisateur cherche.
