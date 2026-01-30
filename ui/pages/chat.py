@@ -5,11 +5,8 @@ import pandas as pd
 import base64
 import os
 
-# Ajouter le dossier racine au path pour les imports
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(BASE_DIR))
-
-# --- NOTE : L'import du graph a été retiré d'ici ---
 
 def chat_page():
     """
