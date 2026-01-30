@@ -1,5 +1,5 @@
 # db/schema.py
-from sqlalchemy import Table, Column, Integer, String, Float, ForeignKey, MetaData, Boolean
+from sqlalchemy import Table, Column, Integer, String, Float, ForeignKey, MetaData
 
 metadata = MetaData()
 
@@ -41,12 +41,13 @@ candidats = Table(
 
     Column("score_voix", Integer, default=0),
     Column("pourcentage_voix", Float, default=0.0),
-    Column("est_elu", Boolean, default=False), 
+    # ✅ CHANGEMENT: Boolean → Integer pour SQLite
+    Column("est_elu", Integer, default=0),  # 0 = False, 1 = True
 )
 
 # --- VUES CORRIGÉES ---
 
-# Vue A : Données complètes (Déjà correcte, mais on s'assure de tout avoir)
+# Vue A : Données complètes
 vue_resultats_detailles = """
 CREATE VIEW IF NOT EXISTS vue_resultats_detailles AS
 SELECT 
@@ -66,8 +67,7 @@ FROM candidats c
 JOIN circonscriptions ci ON c.circonscription_id = ci.id;
 """
 
-# Vue B : Gagnants uniquement 
-# AJOUT des colonnes _norm pour que l'agent puisse filtrer ici aussi !
+# Vue B : Gagnants uniquement
 vue_elus_uniquement = """
 CREATE VIEW IF NOT EXISTS vue_elus_uniquement AS
 SELECT 
@@ -81,11 +81,10 @@ SELECT
     nom_liste_candidat_norm,
     score_voix
 FROM vue_resultats_detailles
-WHERE est_elu = 1 OR est_elu = 'TRUE' OR est_elu = '1';
+WHERE est_elu = 1;
 """
 
 # Vue C : Stats régionales
-# AJOUT de region_nom_norm pour permettre des requêtes comme "Participation à Gbeke"
 vue_stats_regionales = """
 CREATE VIEW IF NOT EXISTS vue_stats_regionales AS
 SELECT 
@@ -94,7 +93,7 @@ SELECT
     SUM(inscrits) as total_inscrits,
     SUM(votants) as total_votants,
     SUM(suffrages_exprimes) as total_exprimes,
-    ROUND((CAST(SUM(votants) AS FLOAT) / SUM(inscrits)) * 100, 2) as taux_participation_moyen
+    ROUND((CAST(SUM(votants) AS FLOAT) / NULLIF(SUM(inscrits), 0)) * 100, 2) as taux_participation_regional
 FROM circonscriptions
 GROUP BY region_nom, region_nom_norm;
 """
