@@ -24,7 +24,7 @@ def generate_final_answer_node(state: AgentState) -> Command:
     
     if not sql_results:
         return Command(
-            update={"final_answer": "Aucun résultat trouvé pour cette recherche."},
+            update={"final_answer": "Aucun résultat trouvé pour cette recherche.,veuillez reformulez"},
             goto=END
         )
 
@@ -67,7 +67,8 @@ QUESTION : "{user_query}"
 DONNÉES SQL :
 {formatted_data}
 
-Présente ces résultats de façon claire pour l'interlocuteur :
+Présente ces résultats de façon claire pour l'interlocuteur 
+Ne parle surtout pas assez.Evite les longs textes
 """
 
     prompt = ChatPromptTemplate.from_messages([
