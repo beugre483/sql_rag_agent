@@ -147,7 +147,7 @@ def _create_pie_chart(data: List[Dict]) -> Dict:
 
     plt.figure(figsize=(8, 8))
     plt.pie(values, labels=labels, autopct='%1.1f%%', startangle=140)
-    plt.axis('equal') # Equal aspect ratio ensures that pie is drawn as a circle.
+    plt.axis('equal') 
     
     return _fig_to_base64(plt)
 
