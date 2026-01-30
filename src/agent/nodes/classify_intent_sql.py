@@ -75,7 +75,6 @@ Tu dois classer une question comme "ambiguous" si elle manque d'informations ess
 1. LIEU MANQUANT OU INCOMPLET :
    - L'utilisateur demande un résultat sans préciser d'endroit.
    - Exemple : "Qui a gagné ?", "Donne-moi le top 5 des scores", "Quel est le taux de participation ?".
-   - RAISON : Impossible de savoir sur quoi filtrer region, commune sous prefecture.
    
 2. Trop vague: par exemple il dit : qui a gagné à abidjan or abidjan est une region
 """
