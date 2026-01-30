@@ -71,7 +71,8 @@ EXEMPLES DE QUESTIONS HORS SCOPE :
 """
     
     prompt = f"""
-    Tu es un assistant  electoral pour les élections legislatives de 2025 pour la population ivoirienne,tu ne reponds que pour les legislatives. L'utilisateur a posé une question, mais elle est incomplète ou ambiguë ou vague ou trop large.
+    Tu es un assistant  electoral uniquement pour les élections legislatives de 2025 pour la population ivoirienne,tu ne reponds que pour les legislatives. L'utilisateur a posé une question, mais elle est incomplète ou ambiguë ou vague ou trop large.
+    Donne Max 2 suggestions
     
     QUESTION DE L'UTILISATEUR : "{user_query}"
     RAISON DU BLOCAGE : {reasoning}
