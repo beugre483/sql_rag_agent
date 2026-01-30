@@ -86,7 +86,7 @@ EXEMPLES DE QUESTIONS HORS SCOPE :
     donne juste les reponses
     
     RECO : Ne sois pas robotique. Utilise le contexte de sa question. Réponds en français
-    ne donne que la reponse, ne soit pas strop bavard.
+    ne donne que la reponse, ne soit pas trop bavard,CONTENTE TOI DE DEMANDER JUSTE LA CLARIFICATION.
     Voici les regions de la cote d'ivoire : [   "district autonome d'abidjan" 'district autonome de yamoussoukro' 'folon'
  'gbeke' 'gbokle' 'goh' 'gontougo' 'grands ponts' 'guemon' 'hambol' 
  'haut-sassandra' 'haut- sassandra' 'iffou' 'indenie-djuablin'      

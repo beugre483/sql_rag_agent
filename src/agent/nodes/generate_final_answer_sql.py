@@ -60,16 +60,18 @@ Voici les regions de la cote d'ivoire :
  'kabadougou' 'la me' 'loh-djiboua' 'marahoue' 'moronou' 'nawa' "n'zi"
  'poro' 'san-pedro' 'sud-comoe' 'tonkpi' 'worodougou'
  on dit generalement abidjan au lieu de district autonome d'abidjan
+ 
 """
 
     human_message = f"""
 QUESTION : "{user_query}"
 DONNÉES SQL :
 {formatted_data}
-
 Présente ces résultats de façon claire pour l'interlocuteur 
 Ne parle surtout pas assez.Evite les longs textes
-Evite de mettre des notes à la fin de tes messages : notes:....
+EVITE de mettre des notes à la fin de tes messages : notes:....
+
+
 """
 
     prompt = ChatPromptTemplate.from_messages([
