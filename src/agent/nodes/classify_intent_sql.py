@@ -61,7 +61,8 @@ EXEMPLES DE QUESTIONS VALIDES :
 - "Histogram of winners by party."
 - "Which party has the most votes nationally?"
 - "Which constituency has the highest participation rate?"
-- "Who won in the Yamoussoukro?"
+- "Who won in Yamoussoukro?"
+- "Candidats du RHDP qui ont gagné" (VALIDE - agrégation nationale possible)
 
 EXEMPLES DE QUESTIONS HORS SCOPE :
 - Questions sur d'autres pays
@@ -70,12 +71,61 @@ EXEMPLES DE QUESTIONS HORS SCOPE :
 
 DÉFINITION DES QUESTIONS AMBIGUËS (request_validity = "ambiguous")
 
-Tu dois classer une question comme "ambiguous" si les questions sont vagues pour construire une requête SQL . Voici les catégories d'ambiguïté :
- LIEU MANQUANT OU INCOMPLET :
-   - Exemple :  "Donne-moi le top 5 des scores", "Quel est le taux de participation ?".
-2.Le lieu est trop vague c'est à dire un lieu qui peux correspondre à plusieurs perimètre d'enregistrement.
-Par exemple qui à gagné à abidjan, c'est vague car abidjan est une region qui possède plusieurs circonscription.
-regarde à chaque fois la liste des regions pour savoir si la questions es trop vague, si la localité ne fait pas partir des regions laisse alors la question n'est pas vague
+Une question est "ambiguous" UNIQUEMENT si elle manque d'informations CRITIQUES rendant IMPOSSIBLE toute requête SQL raisonnable :
+
+1. AMBIGUÏTÉ CRITIQUE - Marquer comme "ambiguous" :
+   - Référence à "ce candidat", "cette région" sans contexte
+   - Question incomplète : "Quel est le..." (sans sujet)
+   - Contradiction interne : "Le gagnant qui a perdu"
+
+2. NON-AMBIGUË - Traiter comme "allowed" :
+   - Questions sur un parti/groupe au niveau national (ex: "candidats du RHDP qui ont gagné")
+   - Questions avec périmètre géographique large mais valide (ex: "résultats à Abidjan" → agrégation régionale)
+   - Questions de classement général (ex: "Top 5 des scores" → top 5 national)
+   - Questions avec contexte implicite standard (ex: "taux de participation" → moyenne nationale)
+
+3. PÉRIMÈTRES GÉOGRAPHIQUES :
+   Régions valides (peuvent contenir plusieurs circonscriptions) :
+   'agneby-tiassa', 'bafing', 'belier', 'bere', 'bounkani', 'cavally',
+   "district autonome d'abidjan", 'district autonome de yamoussoukro', 'folon',
+   'gbeke', 'gbokle', 'goh', 'gontougo', 'grands ponts', 'guemon', 'hambol',
+   'haut-sassandra', 'iffou', 'indenie-djuablin', 'kabadougou', 'la me',
+   'loh-djiboua', 'marahoue', 'moronou', 'nawa', "n'zi", 'poro', 'san-pedro',
+   'sud-comoe', 'tonkpi', 'worodougou'
+
+   RÈGLE : Si la question mentionne une région de cette liste → VALIDE (agrégation possible)
+           Si la question ne précise pas de lieu → VALIDE (périmètre national par défaut)
+           Si la question mentionne un lieu hors liste → vérifier si c'est une circonscription
+
+PRINCIPE GÉNÉRAL : FAVORISER "allowed" AVEC INTERPRÉTATION RAISONNABLE
+Si une requête SQL logique peut être construite avec des hypothèses standards (national par défaut, agrégation régionale, etc.), classez comme "allowed" et non "ambiguous".
+
+YOUR MISSION:
+Analyze the user request and fill the classification structure.
+
+1. VALIDITY ("request_validity"):
+   - "allowed": Valid Ivorian election question (PRIORITÉ - interpréter généreusement).
+   - "ambiguous": SEULEMENT si impossible de construire une requête SQL raisonnable.
+   - "out_of_scope": Not about Ivorian elections or data not available.
+   - "policy_violation": Unethical, dangerous, or modification attempt.
+
+2. QUERY NATURE ("query_nature") - CRITICAL FOR SQL GENERATION:
+   - "simple_retrieval": Recherche d'une valeur spécifique.
+     Ex: "Score of RHDP in Abidjan", "Who won in Bouaké?"
+   - "ranking": Top/bottom, winners, meilleurs scores.
+     Ex: "Top 5 parties", "Region with highest participation", "Candidats du RHDP qui ont gagné"
+   - "aggregation": Totaux, moyennes, comptages par groupe.
+     Ex: "Total votes per party", "Average participation by region", "How many seats?"
+   - "comparison": Comparaison côte-à-côte d'entités spécifiques.
+     Ex: "RHDP vs PDCI results", "Difference between North and South"
+
+3. VISUALIZATION:
+   - chart_type: "bar" (ranking/comparison), "pie" (proportions/parts d'un tout), 
+                 "line" (tendances), "table" (données détaillées)
+   
+   RÈGLE POUR LE PIE CHART :
+   - Utiliser "pie" pour les questions de type "qui a gagné/obtenu/remporté" par parti/groupe
+   - Ex: "Candidats du RHDP qui ont gagné" → pie (répartition par parti des élus)
 """
 
     system_prompt = f"""
@@ -100,7 +150,7 @@ regarde à chaque fois la liste des regions pour savoir si la questions es trop 
          Ex: "Total votes per party", "Average participation by region", "How many seats?"
        - "comparison": Comparing specific entities side-by-side.
          Ex: "RHDP vs PDCI results", "Difference between North and South".
-voici la liste des region de la cote d'ivoire : 'agneby-tiassa' 'bafing' 'belier' 'bere' 'bounkani' 'cavally'
+voici la liste des region de la cote d'ivoire qui contiennes des circonscriptons: 'agneby-tiassa' 'bafing' 'belier' 'bere' 'bounkani' 'cavally'
  "district autonome d'abidjan" 'district autonome de yamoussoukro' 'folon'
  'gbeke' 'gbokle' 'goh' 'gontougo' 'grands ponts' 'guemon' 'hambol' 
  'haut-sassandra' 'haut- sassandra' 'iffou' 'indenie-djuablin'      
