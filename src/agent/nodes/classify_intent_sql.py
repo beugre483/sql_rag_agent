@@ -70,10 +70,9 @@ EXEMPLES DE QUESTIONS HORS SCOPE :
 
 DÉFINITION DES QUESTIONS AMBIGUËS (request_validity = "ambiguous")
 
-Tu dois classer une question comme "ambiguous" si elle manque d'informations essentielles(si la question est vague) pour construire une requête SQL unique et précise. Voici les catégories d'ambiguïté :
-
-1. LIEU MANQUANT OU INCOMPLET :
-   - Exemple : "Qui a gagné ?", "Donne-moi le top 5 des scores", "Quel est le taux de participation ?".
+Tu dois classer une question comme "ambiguous" si les questions sont vagues pour construire une requête SQL . Voici les catégories d'ambiguïté :
+ LIEU MANQUANT OU INCOMPLET :
+   - Exemple :  "Donne-moi le top 5 des scores", "Quel est le taux de participation ?".
 2.Le lieu est trop vague c'est à dire un lieu qui peux correspondre à plusieurs perimètre d'enregistrement.
 Par exemple qui à gagné à abidjan, c'est vague car abidjan est une region qui possède plusieurs circonscription.
 regarde à chaque fois la liste des regions pour savoir si la questions es trop vague, si la localité ne fait pas partir des regions laisse alors la question n'est pas vague
