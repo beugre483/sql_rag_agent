@@ -69,6 +69,7 @@ DONNÉES SQL :
 
 Présente ces résultats de façon claire pour l'interlocuteur 
 Ne parle surtout pas assez.Evite les longs textes
+Evite de mettre des notes à la fin de tes messages : notes:....
 """
 
     prompt = ChatPromptTemplate.from_messages([

@@ -76,7 +76,7 @@ Génère une requête SQL brute basée strictement sur le schéma et les types c
    - total_inscrits (INTEGER) : Somme des inscrits.
    - total_votants (INTEGER) : Somme des votants.
    - total_exprimes (INTEGER) : Somme des suffrages exprimés.
-   - taux_participation_moyen (REAL) : Moyenne calculée en %.
+   - taux_participation_regional (REAL) : Moyenne calculée en %.
 
 --- CONSIGNES DE SYNTAXE ---
 - TEXT : Utilise 'guillemets simples' et LIKE avec % (ex: region_nom_norm LIKE '%abidjan%').

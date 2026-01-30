@@ -12,7 +12,7 @@ def load_csv(filename: str) -> pd.DataFrame:
     return pd.read_csv(path)
 
 def view_data_page():
-    st.header("📂 Données électorales nettoyées")
+    st.header("📂 Données électorales")
 
     # Lister les fichiers CSV
     csv_files = [f.name for f in DATA_DIR.glob("*.csv")]
