@@ -4,7 +4,6 @@ from pathlib import Path
 
 # Imports UI
 from ui.menu import sidebar_menu
-from ui.pages.view_data import view_data_page
 from ui.pages.chat import chat_page
 
 # --- 1. CONFIGURATION DE LA PAGE ---
@@ -123,6 +122,3 @@ elif selected_page == "🤖 Chat IA":
         st.warning("🔒 Accès verrouillé")
         st.info("⬅️ Vous devez entrer vos clés dans la barre latérale pour utiliser cette fonctionnalité.")
         
-
-elif selected_page == "📁 Voir les données":
-    view_data_page()
