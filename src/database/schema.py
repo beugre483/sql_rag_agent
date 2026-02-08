@@ -41,11 +41,10 @@ candidats = Table(
 
     Column("score_voix", Integer, default=0),
     Column("pourcentage_voix", Float, default=0.0),
-    # ✅ CHANGEMENT: Boolean → Integer pour SQLite
+
     Column("est_elu", Integer, default=0),  # 0 = False, 1 = True
 )
 
-# --- VUES CORRIGÉES ---
 
 # Vue A : Données complètes
 vue_resultats_detailles = """

@@ -1,14 +1,18 @@
 import asyncio
 import os
 import pandas as pd
+import unicodedata
 from pathlib import Path
 from sqlalchemy import create_engine
-from typing import List
 
 from ingestion.table_extractor import PDFElectionExtractor  
 from ingestion.clean_data import ElectionDataCleaner
 from database.connection import DatabaseConnection
 from database.schema import metadata, creation_views_sql
+from dotenv import load_dotenv
+
+load_dotenv()
+
 
 class ElectionLoader:
     def __init__(self, pdf_path: str, db_path: str, output_csv_path: str):
@@ -23,30 +27,91 @@ class ElectionLoader:
         self.extractor = PDFElectionExtractor(api_key=api_key)
         self.cleaner = ElectionDataCleaner()
 
+    def _normalize_text(self, text):
+        """Nettoie le texte : Majuscules, sans accents"""
+        if pd.isna(text):
+            return None
+        text = str(text).upper()
+        text = ''.join(c for c in unicodedata.normalize('NFD', text) if unicodedata.category(c) != 'Mn')
+        return text.strip()
+
+    def _prepare_dataframe_for_db(self, df: pd.DataFrame) -> pd.DataFrame:
+        """
+        Renomme les colonnes de l'extracteur vers les noms de la Base de Données
+        et génère les colonnes _norm.
+        """
+        # Mapping: Nom Extracteur (gauche) -> Nom DB (droite)
+        mapping = {
+            'region': 'region_nom',
+            'code_circo': 'code_circonscription',
+            'nom_circo': 'nom_circonscription',
+            'nb_bureaux': 'nb_bureaux_vote',
+            'nb_blancs': 'bulletins_blancs_nombre',
+            'pourcentage_blancs': 'bulletins_blancs_pourcentage',
+            'parti': 'parti_politique',
+            'candidat': 'nom_liste_candidat',
+            'score': 'score_voix',
+            'pourcentage': 'pourcentage_voix'
+        }
+        
+        # Renommage
+        df = df.rename(columns={k: v for k, v in mapping.items() if k in df.columns})
+
+        # Création des colonnes normalisées (_norm)
+        cols_to_normalize = {
+            'region_nom': 'region_nom_norm',
+            'nom_circonscription': 'nom_circonscription_norm',
+            'nom_liste_candidat': 'nom_liste_candidat_norm',
+            'parti_politique': 'parti_politique_norm'
+        }
+
+        for source, target in cols_to_normalize.items():
+            if source in df.columns:
+                df[target] = df[source].apply(self._normalize_text)
+            else:
+                df[target] = None # Sécurité
+
+        # Conversion Types Numériques (Sécurité)
+        cols_int = ['inscrits', 'votants', 'nb_bureaux_vote', 'bulletins_nuls', 'suffrages_exprimes', 'bulletins_blancs_nombre', 'score_voix']
+        for col in cols_int:
+            if col in df.columns:
+                df[col] = pd.to_numeric(df[col], errors='coerce').fillna(0).astype(int)
+        
+        cols_float = ['taux_participation', 'bulletins_blancs_pourcentage', 'pourcentage_voix']
+        for col in cols_float:
+            if col in df.columns:
+                df[col] = pd.to_numeric(df[col], errors='coerce').fillna(0.0)
+
+        return df
+
     async def run_pipeline(self):
         print("\n" + "="*70)
         print(f" DÉMARRAGE DU PIPELINE : {self.pdf_path.name}")
         print("="*70)
 
-        print("\n ÉTAPE 1/5 : Extraction du PDF (Ordre conservé)...")
+        # 1. Extraction
         await self.extractor.extract_from_pdf(str(self.pdf_path))
-        
-        print("\n ÉTAPE 2/5 : Aplatissement des données...")
         df_raw = self.extractor.to_dataframe()
-        print(f"   ✓ {len(df_raw)} lignes extraites")
+        print(f"   ✓ Lignes extraites : {len(df_raw)}")
 
-        print("\n🧹 ÉTAPE 3/5 : Nettoyage des données...")
-        df_clean = self.cleaner.clean(df_raw)
-        print(f"   ✓ {len(df_clean)} lignes après nettoyage")
+        if df_raw.empty:
+            print("   ! Aucune donnée extraite. Arrêt.")
+            return
 
-        print("\n ÉTAPE 4/5 : Sauvegarde CSV...")
+        # 2. Préparation (Renommage + Normalisation)
+        df_mapped = self._prepare_dataframe_for_db(df_raw)
+
+        # 3. Nettoyage (Via ton module existant)
+        df_clean = self.cleaner.clean(df_mapped)
+        print(f"   ✓ Lignes après nettoyage : {len(df_clean)}")
+
+        # 4. Sauvegarde CSV
         self.output_csv_path.parent.mkdir(parents=True, exist_ok=True)
         df_clean.to_csv(self.output_csv_path, index=False, encoding='utf-8')
-        print(f"   ✓ Fichier généré : {self.output_csv_path}")
+        print(f"   ✓ CSV généré : {self.output_csv_path}")
 
-        print("\n ÉTAPE 5/5 : Chargement dans la base de données...")
-        
-        # Initialisation DB
+        # 5. Chargement en Base de Données
+        print("\n ÉTAPE : Chargement SQL...")
         engine_url = f"sqlite:///{self.db_path.resolve()}"
         engine = create_engine(engine_url)
         metadata.drop_all(engine)
@@ -57,8 +122,8 @@ class ElectionLoader:
         cursor = conn.cursor()
 
         try:
-            # Groupement par circonscription pour recréer la structure relationnelle
-            # On utilise sort=False pour ne pas casser l'ordre d'apparition
+            # Groupement par Circonscription
+            # On utilise les colonnes qui définissent une circo unique
             cols_group = [
                 'region_nom', 'region_nom_norm', 'code_circonscription', 
                 'nom_circonscription', 'nom_circonscription_norm',
@@ -66,112 +131,93 @@ class ElectionLoader:
                 'bulletins_nuls', 'suffrages_exprimes', 
                 'bulletins_blancs_nombre', 'bulletins_blancs_pourcentage'
             ]
+            
+            # Filtre pour ne garder que les colonnes présentes dans le DF
+            cols_group = [c for c in cols_group if c in df_clean.columns]
 
-       
-            grouped = df_clean.groupby(cols_group, sort=False)
+            grouped = df_clean.groupby(cols_group, sort=False, dropna=False)
 
-            #  Définir les colonnes numériques pour conversion explicite
-            int_columns = {'nb_bureaux_vote', 'inscrits', 'votants', 
-                          'bulletins_nuls', 'suffrages_exprimes', 
-                          'bulletins_blancs_nombre'}
-            float_columns = {'taux_participation', 'bulletins_blancs_pourcentage'}
-
-            circonscriptions_count = 0
-            candidats_count = 0
+            circo_count = 0
+            cand_count = 0
 
             for group_keys, df_group in grouped:
-                data_circo = {}
-                for key, value in zip(cols_group, group_keys):
-                    if pd.isna(value):
-                        data_circo[key] = None
-                    elif key in int_columns:
-                        # Convertir numpy int en int Python natif
-                        data_circo[key] = int(value)
-                    elif key in float_columns:
-                        # Convertir numpy float en float Python natif
-                        data_circo[key] = float(value)
-                    else:
-                        # Pour les strings
-                        data_circo[key] = str(value) if value is not None else None
+                # Préparation données Circo
+                # zip permet d'associer NomColonne -> Valeur
+                data_circo = dict(zip(cols_group, group_keys))
                 
-                # Renommer nb_bureaux_vote -> nb_bureau
-                data_circo['nb_bureau'] = data_circo.pop('nb_bureaux_vote')
+                # Adaptation nom colonne pour INSERT (nb_bureaux_vote -> nb_bureau dans ta DB)
+                if 'nb_bureaux_vote' in data_circo:
+                    data_circo['nb_bureau'] = data_circo.pop('nb_bureaux_vote')
                 
-                sql_circo = """
-                    INSERT INTO circonscriptions 
-                    (region_nom, region_nom_norm, code_circonscription, 
-                     nom_circonscription, nom_circonscription_norm, 
-                     nb_bureau, inscrits, votants, taux_participation, 
-                     bulletins_nuls, suffrages_exprimes, 
-                     bulletins_blancs_nombre, bulletins_blancs_pourcentage)
-                    VALUES (:region_nom, :region_nom_norm, :code_circonscription, 
-                            :nom_circonscription, :nom_circonscription_norm, 
-                            :nb_bureau, :inscrits, :votants, :taux_participation, 
-                            :bulletins_nuls, :suffrages_exprimes, 
-                            :bulletins_blancs_nombre, :bulletins_blancs_pourcentage)
-                """
+                # Gestion des None
+                for k, v in data_circo.items():
+                    if pd.isna(v): data_circo[k] = None
+
+                # Construction dynamique requête INSERT Circo
+                keys = list(data_circo.keys())
+                placeholders = [f":{k}" for k in keys]
+                sql_circo = f"INSERT INTO circonscriptions ({', '.join(keys)}) VALUES ({', '.join(placeholders)})"
+                
                 cursor.execute(sql_circo, data_circo)
                 circo_id = cursor.lastrowid
-                circonscriptions_count += 1
+                circo_count += 1
 
-                #  CONVERSION EXPLICITE POUR LES CANDIDATS
+                # Préparation données Candidats
                 candidates_data = []
                 for _, row in df_group.iterrows():
                     candidates_data.append({
-                        "circonscription_id": int(circo_id),
-                        "nom_liste_candidat": str(row["nom_liste_candidat"]),
-                        "nom_liste_candidat_norm": str(row["nom_liste_candidat_norm"]) if pd.notna(row["nom_liste_candidat_norm"]) else None,
-                        "parti_politique": str(row["parti_politique"]) if pd.notna(row["parti_politique"]) else None,
-                        "parti_politique_norm": str(row["parti_politique_norm"]) if pd.notna(row["parti_politique_norm"]) else None,
-                        "score_voix": int(row["score_voix"]) if pd.notna(row["score_voix"]) else 0,
-                        "pourcentage_voix": float(row["pourcentage_voix"]) if pd.notna(row["pourcentage_voix"]) else 0.0,
-                        "est_elu": 1 if row["est_elu"] else 0
+                        "circonscription_id": circo_id,
+                        "nom_liste_candidat": row.get("nom_liste_candidat"),
+                        "nom_liste_candidat_norm": row.get("nom_liste_candidat_norm"),
+                        "parti_politique": row.get("parti_politique"),
+                        "parti_politique_norm": row.get("parti_politique_norm"),
+                        "score_voix": row.get("score_voix", 0),
+                        "pourcentage_voix": row.get("pourcentage_voix", 0.0),
+                        "est_elu": 1 if row.get("est_elu") else 0
                     })
                 
-                sql_candidat = """
+                sql_cand = """
                     INSERT INTO candidats 
                     (circonscription_id, nom_liste_candidat, nom_liste_candidat_norm, 
-                     parti_politique, parti_politique_norm, 
-                     score_voix, pourcentage_voix, est_elu)
+                     parti_politique, parti_politique_norm, score_voix, pourcentage_voix, est_elu)
                     VALUES (:circonscription_id, :nom_liste_candidat, :nom_liste_candidat_norm, 
-                            :parti_politique, :parti_politique_norm, 
-                            :score_voix, :pourcentage_voix, :est_elu)
+                            :parti_politique, :parti_politique_norm, :score_voix, :pourcentage_voix, :est_elu)
                 """
-                cursor.executemany(sql_candidat, candidates_data)
-                candidats_count += len(candidates_data)
+                cursor.executemany(sql_cand, candidates_data)
+                cand_count += len(candidates_data)
 
             conn.commit()
-            print(f"   ✓ {circonscriptions_count} circonscriptions insérées")
-            print(f"   ✓ {candidats_count} candidats insérés")
+            print(f"   ✓ {circo_count} circonscriptions insérées")
+            print(f"   ✓ {cand_count} candidats insérés")
             
-            # Vues
-            print("\n Création des vues SQL...")
+            # Création des Vues SQL
+            print("\n Création des vues...")
             for view_sql in creation_views_sql:
                 cursor.execute(view_sql)
             conn.commit()
-            print("   ✓ Vues créées avec succès")
+            print("   ✓ Vues créées")
 
         except Exception as e:
             conn.rollback()
-            print(f"\n ERREUR : {e}")
+            print(f"\n ERREUR CRITIQUE : {e}")
             import traceback
             traceback.print_exc()
-            raise e
         finally:
             conn.close()
 
         print("\n" + "="*70)
-        print(" PIPELINE TERMINÉ AVEC SUCCÈS !")
+        print(" TERMINÉ !")
         print("="*70)
 
 if __name__ == "__main__":
+    # CONFIGURATION DES CHEMINS
     BASE_DIR = Path(__file__).resolve().parent.parent.parent
     PDF_FILE = BASE_DIR / "data/raw/resultat.pdf"
     DB_FILE = BASE_DIR / "data/processed/elections.db"
     CSV_OUT = BASE_DIR / "data/processed/elections_clean.csv"
 
     if not PDF_FILE.exists():
-        print(f" Erreur: {PDF_FILE} introuvable.")
+        print(f" Erreur: Le fichier {PDF_FILE} est introuvable.")
         exit(1)
 
     loader = ElectionLoader(str(PDF_FILE), str(DB_FILE), str(CSV_OUT))
