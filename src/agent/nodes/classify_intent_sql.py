@@ -94,11 +94,10 @@ Une question est "ambiguous" UNIQUEMENT si elle manque d'informations CRITIQUES 
    'sud-comoe', 'tonkpi', 'worodougou'
 
    RÈGLE : Si la question mentionne une région de cette liste → VALIDE (agrégation possible)
-           Si la question ne précise pas de lieu → VALIDE (périmètre national par défaut)
-           Si la question mentionne un lieu hors liste → vérifier si c'est une circonscription
+     
 
 PRINCIPE GÉNÉRAL : FAVORISER "allowed" AVEC INTERPRÉTATION RAISONNABLE
-Si une requête SQL logique peut être construite avec des hypothèses standards (national par défaut, agrégation régionale, etc.), classez comme "allowed" et non "ambiguous".
+Si une requête SQL logique peut être construite avec des hypothèses standards (agrégation régionale, etc.), classez comme "allowed" et non "ambiguous".
 
 YOUR MISSION:
 Analyze the user request and fill the classification structure.
