@@ -95,20 +95,19 @@ class ElectionLoader:
         print(f"   ✓ Lignes extraites : {len(df_raw)}")
 
         if df_raw.empty:
-            print("   ! Aucune donnée extraite. Arrêt.")
+            print("   Aucune donnée extraite. Arrêt.")
             return
 
         # 2. Préparation (Renommage + Normalisation)
         df_mapped = self._prepare_dataframe_for_db(df_raw)
 
-        # 3. Nettoyage (Via ton module existant)
         df_clean = self.cleaner.clean(df_mapped)
         print(f"   ✓ Lignes après nettoyage : {len(df_clean)}")
 
         # 4. Sauvegarde CSV
         self.output_csv_path.parent.mkdir(parents=True, exist_ok=True)
         df_clean.to_csv(self.output_csv_path, index=False, encoding='utf-8')
-        print(f"   ✓ CSV généré : {self.output_csv_path}")
+        print(f"    CSV généré : {self.output_csv_path}")
 
         # 5. Chargement en Base de Données
         print("\n ÉTAPE : Chargement SQL...")
@@ -149,11 +148,25 @@ class ElectionLoader:
                 if 'nb_bureaux_vote' in data_circo:
                     data_circo['nb_bureau'] = data_circo.pop('nb_bureaux_vote')
                 
+             
+                cols_int_force = ['inscrits', 'votants', 'nb_bureau', 'bulletins_nuls', 
+                                  'suffrages_exprimes', 'bulletins_blancs_nombre']
+                for col in cols_int_force:
+                    if col in data_circo and data_circo[col] is not None:
+                        data_circo[col] = int(data_circo[col])
+                
+
+                cols_float_force = ['taux_participation', 'bulletins_blancs_pourcentage']
+                for col in cols_float_force:
+                    if col in data_circo and data_circo[col] is not None:
+                        data_circo[col] = float(data_circo[col])
+                
                 # Gestion des None
                 for k, v in data_circo.items():
-                    if pd.isna(v): data_circo[k] = None
+                    if pd.isna(v): 
+                        data_circo[k] = None
 
-                # Construction dynamique requête INSERT Circo
+         
                 keys = list(data_circo.keys())
                 placeholders = [f":{k}" for k in keys]
                 sql_circo = f"INSERT INTO circonscriptions ({', '.join(keys)}) VALUES ({', '.join(placeholders)})"
@@ -162,7 +175,7 @@ class ElectionLoader:
                 circo_id = cursor.lastrowid
                 circo_count += 1
 
-                # Préparation données Candidats
+      
                 candidates_data = []
                 for _, row in df_group.iterrows():
                     candidates_data.append({
@@ -171,8 +184,8 @@ class ElectionLoader:
                         "nom_liste_candidat_norm": row.get("nom_liste_candidat_norm"),
                         "parti_politique": row.get("parti_politique"),
                         "parti_politique_norm": row.get("parti_politique_norm"),
-                        "score_voix": row.get("score_voix", 0),
-                        "pourcentage_voix": row.get("pourcentage_voix", 0.0),
+                        "score_voix": int(row.get("score_voix", 0)),  
+                        "pourcentage_voix": float(row.get("pourcentage_voix", 0.0)), 
                         "est_elu": 1 if row.get("est_elu") else 0
                     })
                 
@@ -187,19 +200,19 @@ class ElectionLoader:
                 cand_count += len(candidates_data)
 
             conn.commit()
-            print(f"   ✓ {circo_count} circonscriptions insérées")
-            print(f"   ✓ {cand_count} candidats insérés")
+            print(f"    {circo_count} circonscriptions insérées")
+            print(f"    {cand_count} candidats insérés")
             
             # Création des Vues SQL
             print("\n Création des vues...")
             for view_sql in creation_views_sql:
                 cursor.execute(view_sql)
             conn.commit()
-            print("   ✓ Vues créées")
+            print("   Vues créées")
 
         except Exception as e:
             conn.rollback()
-            print(f"\n ERREUR CRITIQUE : {e}")
+            print(f"\n ERREUR : {e}")
             import traceback
             traceback.print_exc()
         finally:

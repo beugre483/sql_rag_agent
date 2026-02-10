@@ -52,7 +52,7 @@ def handle_api_keys():
                 
                 if st.form_submit_button("Valider"):
                     if mistral_input and llama_input:
-                        # --- CORRECTION ICI ---
+                
                         # On sauvegarde dans le session_state pour qu'elles survivent au rerun
                         st.session_state["MISTRAL_API_KEY"] = mistral_input
                         st.session_state["LLAMA_CLOUD_API_KEY"] = llama_input
@@ -61,7 +61,7 @@ def handle_api_keys():
                             st.session_state["LANGCHAIN_API_KEY"] = langsmith_input
                         
                         st.success("Connexion réussie !")
-                        st.rerun() # Maintenant, au rechargement, les clés seront trouvées à l'étape 2
+                        st.rerun() 
                     else:
                         st.error("Mistral et Llama Cloud sont obligatoires.")
                         
@@ -77,7 +77,7 @@ def handle_api_keys():
         # Activation LangSmith
         if langsmith:
             os.environ["LANGCHAIN_API_KEY"] = langsmith
-            os.environ["LANGCHAIN_TRACING_V2"] = "true" # Note: V2 est préférable à TRACING tout court
+            os.environ["LANGCHAIN_TRACING_V2"] = "true" 
             os.environ["LANGCHAIN_PROJECT"] = "Elections CI App"
         
         st.session_state["authenticated"] = True
@@ -107,9 +107,7 @@ if selected_page == "🏠 Accueil":
     Le système interroge la base de données pour vous répondre.
     
     **Important :** Vous devez entrer vos clés dans la barre latérale pour accéder au chat.
-    
-    ### Voir les données
-    Explorez directement les tableaux de résultats.
+    .
     """)
 
 elif selected_page == "🤖 Chat IA":

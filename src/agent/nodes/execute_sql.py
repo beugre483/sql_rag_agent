@@ -14,7 +14,7 @@ def execute_sql_node(state: AgentState) -> Command[Literal["determine_chart_inte
     if not query:
         return Command(
             update={
-                "errors": ["Aucune requête à exécuter."],  # ✅ UNE SEULE erreur
+                "errors": ["Aucune requête à exécuter."],
                 "sql_results": [],
                 "final_answer": "Désolé, je n'ai pas pu exécuter votre requête. Veuillez reformuler votre question s'il vous plaît."
             },
@@ -46,11 +46,11 @@ def execute_sql_node(state: AgentState) -> Command[Literal["determine_chart_inte
         )
 
     except Exception as e:
-        print(f"  ✗ [Execute SQL Error] : {e}")
+        print(f"   [Execute SQL Error] : {e}")
         
         return Command(
             update={
-                "errors": [f"Erreur d'exécution : {str(e)}"],  # ✅ UNE SEULE erreur
+                "errors": [f"Erreur d'exécution : {str(e)}"],  # UNE SEULE erreur
                 "sql_results": [],
                 "final_answer": "Désolé, je n'ai pas pu exécuter votre requête. Veuillez reformuler votre question s'il vous plaît."
             },

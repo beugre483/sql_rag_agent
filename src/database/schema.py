@@ -84,6 +84,7 @@ WHERE est_elu = 1;
 """
 
 # Vue C : Stats régionales
+
 vue_stats_regionales = """
 CREATE VIEW IF NOT EXISTS vue_stats_regionales AS
 SELECT 
@@ -92,7 +93,7 @@ SELECT
     SUM(inscrits) as total_inscrits,
     SUM(votants) as total_votants,
     SUM(suffrages_exprimes) as total_exprimes,
-    ROUND((CAST(SUM(votants) AS FLOAT) / NULLIF(SUM(inscrits), 0)) * 100, 2) as taux_participation_regional
+    ROUND(CAST(SUM(votants) AS FLOAT) / NULLIF(SUM(inscrits), 0), 4) as taux_participation_regional
 FROM circonscriptions
 GROUP BY region_nom, region_nom_norm;
 """
