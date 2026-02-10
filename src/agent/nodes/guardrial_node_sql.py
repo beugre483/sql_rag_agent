@@ -23,7 +23,7 @@ def guardrail_node(state: AgentState) -> AgentState:
         "supprime tout", "tout supprimer",
         "modifie les données", "change les données",
         "pirate", "hack", "accès admin", "administrateur",
-        "mot de passe", "password", "credentials",
+        "mot de passe", "password", "credentials","prompt"
         
         # Commandes système
         "rm ", "rm -rf", "format", "shutdown", "restart"
