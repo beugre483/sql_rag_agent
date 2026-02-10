@@ -25,7 +25,7 @@ STOP_WORDS = {
     "ce", "se", "sa", "son", "ses", "cette", "ces",
     
     # 3. Mots interrogatifs VAGUES
-    "quel", "quelle", "quels", "quelles", "est-ce", "qu'est-ce", "que", "quoi", "comment"
+  "est-ce", "qu'est-ce", "que", "quoi", "comment"
 }
 
 def preprocess(text: str):
