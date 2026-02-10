@@ -39,7 +39,7 @@ class LigneResultat(BaseModel):
 class ResultatsElection(BaseModel):
     lignes: List[LigneResultat]
 
-# --- EXTRACTEUR CORRIGÉ ---
+
 class PDFElectionExtractor:
     def __init__(self, api_key: str):
         self.client = LlamaExtract(api_key=api_key)
