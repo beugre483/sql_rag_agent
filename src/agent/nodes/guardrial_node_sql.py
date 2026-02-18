@@ -1,7 +1,8 @@
-from langgraph.graph import Command
+
 from typing import Dict, Any
 from ..state import AgentState
 from langsmith import traceable
+from langgraph.types import Command
 
 @traceable(name="guardrail_security")
 def guardrail_node(state: AgentState) -> Command:
