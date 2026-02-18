@@ -1,4 +1,3 @@
-
 from langgraph.graph import Command
 from typing import Dict, Any
 from ..state import AgentState
@@ -6,7 +5,7 @@ from langsmith import traceable
 
 @traceable(name="guardrail_security")
 def guardrail_node(state: AgentState) -> Command:
-    """
+    """s
     Nœud de garde-fou. 
     Vérifie les mots interdits et oriente le flux via Command.
     """
@@ -15,16 +14,26 @@ def guardrail_node(state: AgentState) -> Command:
         "supprime", "efface", "supprimer", "effacer",
         "modifie", "modifier", "change", "changer",
         "insère", "insérer", "ajoute", "ajouter",
-        "crée", "créer", "altère", "truncate", "drop",
+        "crée", "créer", "créez",
+        "altère", "altérer", "modifie la structure",
+        "vide la table", "truncate", "drop",
+        "accorde", "accorder", "révoque", "révoquer",
+        "exécute", "exécuter",
+        
+        # Intentions dangereuses
+        "supprime tout", "tout supprimer",
+        "modifie les données", "change les données",
+        "pirate", "hack", "accès admin", "administrateur",
+        "mot de passe", "password", "credentials", "prompt",
+        "ignore", "enlève",
+
         # Commandes système
-        "rm ", "rm -rf", "format", "shutdown", "restart",
-        # Intentions malveillantes
-        "pirate", "hack", "ignore", "enlève"
+        "rm ", "rm -rf", "format", "shutdown", "restart"
     ]
     
     user_query = state.get("user_query", "").lower()
     
-    # Si pas de requête utilisateur, on passe à l'étape suivante
+    # Si pas de requête utilisateur, on passe à la classification
     if not user_query:
         return Command(goto="classify_intent")
     
@@ -41,6 +50,5 @@ def guardrail_node(state: AgentState) -> Command:
                 },
                 goto="reponse_politique"
             )
-    
-    # Tout est OK → continuer vers la classification
+
     return Command(goto="classify_intent")

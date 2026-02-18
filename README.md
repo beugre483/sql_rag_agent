@@ -302,18 +302,7 @@ Les contributions sont les bienvenues ! Pour contribuer :
 ---
 
 
-Ce projet est en version **v1.0.0 — 
-
----
-
-##  Remerciements
-- **Mistral AI** pour le modèle LLM
-- **LangChain** pour LangGraph et LangSmith
-- **LlamaIndex** pour LlamaExtract et LlamaParse
-- **Challenge Artefact** pour le cadre du projet
-
----
-
+Ce projet est en version **v1
 **Construit avec ❤️ pour faciliter l'accès aux données électorales ivoiriennes**
 
 [🚀 Essayer l'app](https://sqlragagent-iwdpwhwiqupwjpuk4mfqec.streamlit.app/) | [📖  | [⭐ GitHub](https://github.com/beugre483/sql_rag_agent)

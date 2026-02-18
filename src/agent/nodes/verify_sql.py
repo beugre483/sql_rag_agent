@@ -48,7 +48,7 @@ def verify_sql_node(state: AgentState) -> Command[Literal["execute_sql", "genera
         if clean_table not in [t.lower() for t in ALLOWED_OBJECTS] and not clean_table.startswith("("):
             if clean_table.upper() not in ["SELECT", "WHERE", "VALUES", "UNNEST"]:
                 msg = f"HALLUCINATION : La table '{clean_table}' n'existe pas."
-                print(f"  ✗ {msg}")
+                print(f"   {msg}")
                 return _gerer_erreur(state, msg)
 
     # 3. VALIDATION SYNTAXIQUE
@@ -57,12 +57,12 @@ def verify_sql_node(state: AgentState) -> Command[Literal["execute_sql", "genera
             cursor = conn.cursor()
             cursor.execute(f"EXPLAIN QUERY PLAN {query}")
             
-        print("  ✓ Syntaxe et Schéma valides.")
+        print("   Syntaxe et Schéma valides.")
         return Command(goto="execute_sql")
 
     except sqlite3.Error as e:
         error_msg = f"ERREUR SYNTAXE SQLITE : {str(e)}"
-        print(f"  ✗ {error_msg}")
+        print(f"   {error_msg}")
         return _gerer_erreur(state, error_msg)
 
 
@@ -76,7 +76,7 @@ def _gerer_erreur(state: AgentState, new_error: str) -> Command[Literal["generat
     
     # STOP : Trop d'essais
     if total_errors >= 3:
-        print("  ✗ Trop d'échecs successifs. Abandon.")
+        print("   Trop d'échecs successifs. Abandon.")
         return Command(
             update={
                 "errors": [new_error],  # Ajoute cette erreur
