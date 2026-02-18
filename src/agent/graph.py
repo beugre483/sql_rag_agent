@@ -19,38 +19,9 @@ from src.agent.nodes.generate_chart_sql import (
     generate_chart_node
 )
 from src.agent.nodes.generate_final_answer_sql import generate_final_answer_node
+from src.agent.nodes.guardrial_node_sql import guardrail_node
 
-def guardrail_node(state: AgentState) -> Command:
-    """
-    Nœud de garde-fou. 
-    Vérifie les mots interdits et oriente le flux via Command.
-    """
-    mots_interdits = [
-        "supprime", "efface", "supprimer", "effacer",
-        "modifie", "modifier", "change", "changer",
-        "insère", "insérer", "ajoute", "ajouter",
-        "crée", "créer", "altère", "truncate", "drop",
-        "rm ", "rm -rf", "pirate", "hack","ignore","enlève"
-    ]
-    
-    user_query = state.get("user_query", "").lower()
-    
-    if not user_query:
-        return Command(goto="classify_intent")
-    
-    for mot in mots_interdits:
-        if mot in user_query:
-            print(f" [Guardrail] Mot interdit détecté : {mot}")
-            return Command(
-                update={
-                    "errors": [f"Mot-clé interdit détecté: '{mot}'"],
-                    "final_answer": "Désolé, votre requête contient des opérations non autorisées sur la base de données."
-                },
-                goto="reponse_politique"
-            )
-    
-    # Si tout est OK, on passe à la classification
-    return Command(goto="classify_intent")
+
 
 def build_agent_graph():
     """

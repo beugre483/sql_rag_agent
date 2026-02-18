@@ -25,25 +25,24 @@ def generate_sql_query_node(state: AgentState) -> Command[Literal["verify_sql"]]
     classification = state.get('classification')
     similar_context = state.get('similar_examples_context', "")
 
-    # --- 2. NORMALISATION ---
+ 
     normalized_query = ""
     try:
         normalized_query = ElectionDataCleaner.normalize_text(user_query)
     except Exception:
         normalized_query = user_query.lower().strip()
 
-    # --- 3. FEEDBACK D'ERREUR ---
+
     error_feedback = ""
     if errors:
         last_error = errors[-1]
         error_feedback = f"\n ERREUR PRÉCÉDENTE À CORRIGER : {last_error}\n"
 
-    # --- 4. NATURE DE LA REQUÊTE ---
+
     query_nature = "simple_retrieval"
     if classification and hasattr(classification, 'query_nature'):
         query_nature = classification.query_nature
 
-    # --- 5. CONSTRUCTION DU PROMPT AVEC TYPES DE COLONNES ---
     system_prompt = f"""
 TU ES UN EXPERT SQLITE (DIALECTE SQLITE).
 Génère une requête SQL brute basée strictement sur le schéma et les types ci-dessous.
@@ -78,7 +77,7 @@ Génère une requête SQL brute basée strictement sur le schéma et les types c
    - total_exprimes (INTEGER) : Somme des suffrages exprimés.
    - taux_participation_regional (REAL) : Moyenne calculée en %.
 
---- CONSIGNES DE SYNTAXE ---
+ CONSIGNES DE SYNTAXE 
 - TEXT : Utilise 'guillemets simples' et LIKE avec % (ex: region_nom_norm LIKE '%abidjan%').
 - INTEGER/REAL : Pas de guillemets (ex: score_voix > 1000).
 - SQL PUR : Pas de texte explicatif, pas de blocs Markdown (```).
@@ -121,7 +120,7 @@ TYPE DE REQUÊTE : {query_nature}
 Requête SQLite :
 """
 
-    # --- 6. EXÉCUTION ---
+
     prompt = ChatPromptTemplate.from_messages([
         ("system", system_prompt),
         ("human", human_message)

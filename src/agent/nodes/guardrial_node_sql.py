@@ -1,45 +1,46 @@
 
-from langgraph.graph import StateGraph
+from langgraph.graph import Command
 from typing import Dict, Any
 from ..state import AgentState
 from langsmith import traceable
 
 @traceable(name="guardrail_security")
-def guardrail_node(state: AgentState) -> AgentState:
-    """Nœud de garde-fou pour détecter les requêtes dangereuses."""
-    
+def guardrail_node(state: AgentState) -> Command:
+    """
+    Nœud de garde-fou. 
+    Vérifie les mots interdits et oriente le flux via Command.
+    """
     mots_interdits = [
-        # Commandes SQL en français
+        # Commandes SQL et actions dangereuses
         "supprime", "efface", "supprimer", "effacer",
         "modifie", "modifier", "change", "changer",
         "insère", "insérer", "ajoute", "ajouter",
-        "crée", "créer", "créez",
-        "altère", "altérer", "modifie la structure",
-        "vide la table", "truncate",
-        "accorde", "accorder", "révoque", "révoquer",
-        "exécute", "exécuter",
-        
-        # Intentions dangereuses
-        "supprime tout", "tout supprimer",
-        "modifie les données", "change les données",
-        "pirate", "hack", "accès admin", "administrateur",
-        "mot de passe", "password", "credentials",
-        
+        "crée", "créer", "altère", "truncate", "drop",
         # Commandes système
-        "rm ", "rm -rf", "format", "shutdown", "restart"
+        "rm ", "rm -rf", "format", "shutdown", "restart",
+        # Intentions malveillantes
+        "pirate", "hack", "ignore", "enlève"
     ]
     
-    # Vérification insensible à la casse
-    query_lower = state['user_query'].lower()
+    user_query = state.get("user_query", "").lower()
     
+    # Si pas de requête utilisateur, on passe à l'étape suivante
+    if not user_query:
+        return Command(goto="classify_intent")
+    
+    # Vérification des mots interdits
     for mot in mots_interdits:
-        if mot in query_lower:
-            state['errors'].append(f"Mot-clé interdit détecté: '{mot}'")
-            state['final_answer'] = (
-                "Désolé, votre requête semble contenir des opérations non autorisées. "
-                "Je ne peux répondre qu'à des questions d'analyse et de consultation des données."
+        if mot in user_query:
+            print(f"[Guardrail] Mot interdit détecté : {mot}")
+            return Command(
+                update={
+                    "errors": state.get("errors", []) + [f"Mot-clé interdit détecté: '{mot}'"],
+                    "final_answer": (
+                        "Désolé, votre requête contient des opérations non autorisées sur la base de données."
+                    )
+                },
+                goto="reponse_politique"
             )
-            return state
     
-    # Si aucun mot interdit n'est trouvé, on continue
-    return state
+    # Tout est OK → continuer vers la classification
+    return Command(goto="classify_intent")
