@@ -258,29 +258,6 @@ Chaque requête est tracée end-to-end :
 
 → **[Accédez au dashboard LangSmith public](https://smith.langchain.com/public/6fbc472b-7feb-4367-95f7-fc908dafe9a0/r)** pour analyser les performances en temps réel
 
----
-
-## 📂 Structure du Projet
-
-```
-sql_rag_agent/
-├── data/
-│   ├── raw/               # PDF source
-│   └── processed/         # Base SQLite + CSV
-├── src/
-│   ├── agent/            # Logique LangGraph
-│   ├── tools/            # Outils SQL
-│   ├── extraction/       # Pipeline LlamaExtract et ingestions
-│   └── utils/            # Utilitaires
-├── .streamlit/           # Configuration Streamlit
-├── tests/                # Tests unitaires
-├── app.py               # Point d'entrée Streamlit
-├── pyproject.toml       # Dépendances Poetry
-└── README.md
-```
-
----
-
 ## Contribution
 
 Les contributions sont les bienvenues ! Pour contribuer :
