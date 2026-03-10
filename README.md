@@ -140,7 +140,6 @@ LANGSMITH_PROJECT=ElectCI-Agent
 streamlit run app.py
 ```
 
-L'application sera accessible sur `http://localhost:8501`
 
 ---
 
