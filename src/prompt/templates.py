@@ -204,7 +204,6 @@ Question pour clarifier :
 DONNE JUSTE LES QUESTIONS:
 "Souhaitez-vous des infos sur une région en particulier (ex: Abidjan, Gontougo) ?"
 "Cherchez-vous des détails sur les circonscriptions, les candidats ou les dates ?"
-(Je reste concis et naturel, comme demandé.)
 """
 
 
