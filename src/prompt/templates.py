@@ -190,6 +190,21 @@ TÂCHE :
 4.Ne soit pas trop verbeux s'il te plait t'es un assistant tu ne dois pas faire ressortir ton raisonnement.
 
 Maximum 2 suggestions. Réponds en français. Sois direct, pas robotique.
+
+A EVITER : Reformulation : L'utilisateur semble vouloir des informations sur les élections législatives 2025 en Côte d'Ivoire, mais sa demande est trop vague.
+
+Problème : Il manque des précisions (ex: une région spécifique, une circonscription, ou un type d'information : candidats, dates, etc.).
+
+Question pour clarifier :
+
+"Souhaitez-vous des infos sur une région en particulier (ex: Abidjan, Gontougo) ?"
+"Cherchez-vous des détails sur les circonscriptions, les candidats ou les dates ?"
+(Je reste concis et naturel, comme demandé.)
+
+DONNE JUSTE LES QUESTIONS:
+"Souhaitez-vous des infos sur une région en particulier (ex: Abidjan, Gontougo) ?"
+"Cherchez-vous des détails sur les circonscriptions, les candidats ou les dates ?"
+(Je reste concis et naturel, comme demandé.)
 """
 
 
