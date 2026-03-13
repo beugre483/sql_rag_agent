@@ -59,7 +59,7 @@ def generate_chart_node(state: AgentState) -> Command[Literal["generate_final_an
     chart_data = None
     
     try:
-        # --- SÉLECTION DE LA FONCTION SELON LE TYPE ---
+   
         if chart_type == "bar":
             chart_data = _create_bar_chart(data)
         elif chart_type == "pie":

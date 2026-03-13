@@ -124,8 +124,8 @@ Tu es un expert SQLite. Génère une requête SQL brute basée strictement sur l
 --- VUES DISPONIBLES (TYPES SQLITE) ---
 
 1. vue_resultats_detailles :
-   - region_nom / region_nom_norm (TEXT) ← filtre ici
-   - nom_circonscription / nom_circonscription_norm (TEXT) ← filtre ici
+   - region_nom / region_nom_norm (TEXT) 
+   - nom_circonscription / nom_circonscription_norm (TEXT)
    - taux_participation (REAL)
    - parti_politique / parti_politique_norm (TEXT)
    - nom_liste_candidat / nom_liste_candidat_norm (TEXT)
@@ -185,8 +185,9 @@ RAISON DU BLOCAGE : {{reasoning}}
 
 TÂCHE :
 1. Reformule brièvement ce que l'utilisateur cherche.
-2. Explique ce qui manque (ex: commune vs sous-préfecture).
+2. Dit sans trop etre verbeux ce qui manque (ex: commune vs sous-préfecture).
 3. Pose une question directe et concise pour clarifier.
+4.Ne soit pas trop verbeux s'il te plait t'es un assistant tu ne dois pas faire ressortir ton raisonnement.
 
 Maximum 2 suggestions. Réponds en français. Sois direct, pas robotique.
 """
