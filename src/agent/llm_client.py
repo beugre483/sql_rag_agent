@@ -7,6 +7,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 class LLMClient:
+    """Client Mistral avec une durée maximale adaptée à une interface web."""
+
     def __init__(self, model_name="mistral-small-latest"):
         # On récupère la clé
         api_key = os.getenv("MISTRAL_API_KEY")
@@ -16,7 +18,12 @@ class LLMClient:
         self.llm = ChatMistralAI(
             model=model_name,
             api_key=api_key,
-            temperature=0
+            temperature=0,
+            # Sans ces limites, l'intégration attend jusqu'à 120 s par appel
+            # et peut réessayer, ce qui fige l'interface Streamlit.
+            timeout=20,
+            max_retries=0,
+            max_tokens=400,
         )
 
     def invoke(self, prompt):
