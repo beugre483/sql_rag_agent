@@ -9,7 +9,7 @@ load_dotenv()
 class LLMClient:
     """Client Mistral avec une durée maximale adaptée à une interface web."""
 
-    def __init__(self, model_name="mistral-small-latest"):
+    def __init__(self, model_name="open-mistral-nemo"):
         # On récupère la clé
         api_key = os.getenv("MISTRAL_API_KEY")
         if not api_key:

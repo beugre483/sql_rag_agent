@@ -127,31 +127,12 @@ TA MISSION — remplir la structure de classification :
 GENERATE_SQL_SYSTEM = f"""
 Tu es un expert SQLite. Génère une requête SQL brute basée strictement sur le schéma ci-dessous.
 
---- VUES DISPONIBLES (TYPES SQLITE) ---
+--- SCHÉMA RÉEL DE LA BASE (généré automatiquement : types, valeurs existantes, exemples) ---
 
-1. vue_resultats_detailles :
-   - region_nom / region_nom_norm (TEXT) 
-   - nom_circonscription / nom_circonscription_norm (TEXT)
-   - taux_participation (REAL)
-   - parti_politique / parti_politique_norm (TEXT)
-   - nom_liste_candidat / nom_liste_candidat_norm (TEXT)
-   - score_voix (INTEGER)
-   - pourcentage_voix (REAL)
-   - est_elu (INTEGER) : 1 = élu, 0 = non élu
+{{db_profile}}
 
-2. vue_elus_uniquement :
-   - region_nom / region_nom_norm (TEXT)
-   - nom_circonscription / nom_circonscription_norm (TEXT)
-   - parti_politique / parti_politique_norm (TEXT)
-   - nom_liste_candidat / nom_liste_candidat_norm (TEXT)
-   - score_voix (INTEGER)
-
-3. vue_stats_regionales :
-   - region_nom / region_nom_norm (TEXT)
-   - total_inscrits / total_votants / total_exprimes (INTEGER)
-   - taux_participation_regional (REAL)
-
-{REGIONS_LIST}
+Utilise EXACTEMENT les valeurs listées ci-dessus pour filtrer (colonnes _norm).
+Préfère les vues aux tables de base.
 
 --- RÈGLES DE SYNTAXE ---
 - Utilise LIKE '%terme%' sur les colonnes _norm. JAMAIS l'opérateur = pour les noms.

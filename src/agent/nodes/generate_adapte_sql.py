@@ -8,9 +8,13 @@ from ..state import AgentState
 from ..llm_client import LLMClient
 from ...prompt.templates import GENERATE_SQL_SYSTEM, GENERATE_SQL_HUMAN
 from src.ingestion.clean_data import ElectionDataCleaner
+from src.database.profiler import load_profile, format_profile_for_prompt
 
 # Client instancié une seule fois au chargement du module
 llm_client = LLMClient()
+
+# Profil de la base calculé une fois (cache JSON, recalculé si la base change)
+DB_PROFILE = format_profile_for_prompt(load_profile())
 
 
 def _build_direct_party_seat_count_query(normalized_query: str) -> str | None:
@@ -63,6 +67,7 @@ def generate_sql_query_node(state: AgentState) -> Command[Literal["verify_sql"]]
 
     # Formatage au dernier moment, juste avant l'appel LLM
     system_prompt = GENERATE_SQL_SYSTEM.format(
+        db_profile=DB_PROFILE,
         error_feedback=error_feedback,
         similar_context=similar_context or "Aucun exemple, suis le schéma à la lettre.",
     )

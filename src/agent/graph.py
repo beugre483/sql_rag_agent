@@ -51,3 +51,21 @@ def build_agent_graph():
     builder.set_entry_point("guardrail")
 
     return builder.compile()
+
+
+if __name__ == "__main__":
+    import sys
+
+    question = " ".join(sys.argv[1:]) or "Quel candidat a gagné à Abidjan ?"
+
+    agent = build_agent_graph()
+    result = agent.invoke({
+        "user_query": question,
+        "errors": [],
+        "chart_generated": False,
+        "similar_examples_context": "",
+    })
+
+    print(result.get("final_answer"))
+    if result["errors"]:
+        print("Erreurs :", result["errors"])

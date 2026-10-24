@@ -4,7 +4,7 @@
 ![Python](https://img.shields.io/badge/python-3.11.9-blue)
 ![Streamlit](https://img.shields.io/badge/streamlit-latest-red)
 ![LangGraph](https://img.shields.io/badge/langgraph-latest-green)
-![Mistral](https://img.shields.io/badge/LLM-Mistral%20Small-orange)
+![Mistral](https://img.shields.io/badge/LLM-Mistral%20Nemo-orange)
 
 **Transformez vos questions en insights électoraux** — Interrogez les données des élections législatives ivoiriennes en langage naturel et obtenez des réponses précises avec visualisations.
 
@@ -167,14 +167,26 @@ L'agent utilise une **base de requêtes validées** pour :
 - Adapter les requêtes existantes au lieu de générer du SQL from scratch
 - Améliorer progressivement la qualité des réponses
 
-### 4. Vues SQL Pré-Calculées
+### 4. Profilage Automatique de la Base
+
+Le schéma fourni au LLM n'est plus écrit à la main : `src/database/profiler.py` interroge la base (`sqlite_master`, `PRAGMA`) et produit un profil injecté dans le prompt de génération SQL :
+- types, taux de NULL, nombre de valeurs distinctes, min/max des colonnes numériques
+- liste exhaustive des valeurs des colonnes catégorielles (partis, régions…) pour filtrer avec les valeurs réelles
+- clés étrangères et lignes d'exemple
+- cache dans `data/processed/db_profile.json`, recalculé si la base change
+
+```bash
+python -m src.database.profiler   # régénère et affiche le profil
+```
+
+### 5. Vues SQL Pré-Calculées
 
 Des vues SQL abstraient la complexité :
 - `vue_resultats_detailles` : jointures automatiques
 - `vue_elus` : filtre sémantique (évite les erreurs)
 - `vue_stats_regionales` : agrégations pré-calculées
 
-### 5. Orchestration LangGraph
+### 6. Orchestration LangGraph
 
 Chaque requête suit un workflow contrôlé :
 1. **Garde-fou** : détection de requêtes interdites
@@ -218,7 +230,7 @@ Chaque requête suit un workflow contrôlé :
 
 | Composant | Technologie |
 |-----------|------------|
-| **LLM** | Mistral Small (via API) |
+| **LLM** | Open Mistral Nemo (via API Mistral) |
 | **Orchestration** | LangGraph |
 | **Extraction PDF** | LlamaExtract + LlamaParse |
 | **Base de Données** | SQLite |
@@ -236,6 +248,10 @@ Chaque requête suit un workflow contrôlé :
 - **Robustesse orthographique limitée** : Les variations phonétiques complexes peuvent poser problème
 
 ### En Développement
+- Résolution d'entités (schema linking) par correspondance floue sur les valeurs réelles
+- Validation SQL par AST (`sqlglot`) et réessai en cas d'erreur d'exécution
+- Jeu d'évaluation (execution accuracy) pour mesurer chaque amélioration
+- Nettoyage des données (région `C`, `HAUT- SASSANDRA` dupliquée, variantes de listes)
 - Intégration d'un agent RAG pour questions descriptives
 - Mémoire conversationnelle courte et longue durée
 - Support multilingue (anglais)

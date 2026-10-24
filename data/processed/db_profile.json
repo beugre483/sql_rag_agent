@@ -1,0 +1,954 @@
+{
+  "candidats": {
+    "kind": "table",
+    "rows": 930,
+    "foreign_keys": [
+      "circonscription_id -> circonscriptions.id"
+    ],
+    "columns": {
+      "id": {
+        "type": "INTEGER",
+        "null_pct": 0.0,
+        "distinct": 930,
+        "min": 1,
+        "max": 930
+      },
+      "circonscription_id": {
+        "type": "INTEGER",
+        "null_pct": 0.0,
+        "distinct": 205,
+        "min": 1,
+        "max": 205
+      },
+      "nom_liste_candidat": {
+        "type": "VARCHAR",
+        "null_pct": 0.0,
+        "distinct": 893,
+        "top_values": [
+          "TOUS ENSEMBLE POUR LA CÔTE D'IVOIRE",
+          "UNE COTE DIVOIRE EN PAIX, PROSPERE ET SOLIDAIRE",
+          "UNE CÔTE DIVOIRE EN PAIX, PROSPÈRE ET SOLIDAIRE",
+          "UNE COTE DIVOIRE EN PAIX PROSPERE ET SOLIDAIRE",
+          "INDEPENDANT"
+        ]
+      },
+      "parti_politique": {
+        "type": "VARCHAR",
+        "null_pct": 0.2,
+        "distinct": 41,
+        "top_values": [
+          "INDEPENDANT",
+          "RHDP",
+          "PDCI-RDA",
+          "ADCI",
+          "MGC"
+        ]
+      },
+      "nom_liste_candidat_norm": {
+        "type": "VARCHAR",
+        "null_pct": 0.0,
+        "distinct": 890,
+        "top_values": [
+          "tous ensemble pour la cote d'ivoire",
+          "une cote divoire en paix, prospere et solidaire",
+          "une cote divoire en paix prospere et solidaire",
+          "une cote d'ivoire en paix prospere et solidaire",
+          "independant"
+        ]
+      },
+      "parti_politique_norm": {
+        "type": "VARCHAR",
+        "null_pct": 0.0,
+        "distinct": 42,
+        "top_values": [
+          "independant",
+          "rhdp",
+          "pdci-rda",
+          "adci",
+          "mgc"
+        ]
+      },
+      "score_voix": {
+        "type": "INTEGER",
+        "null_pct": 0.0,
+        "distinct": 742,
+        "min": 0,
+        "max": 141884
+      },
+      "pourcentage_voix": {
+        "type": "FLOAT",
+        "null_pct": 0.0,
+        "distinct": 751,
+        "min": 0.0,
+        "max": 1.0
+      },
+      "est_elu": {
+        "type": "INTEGER",
+        "null_pct": 0.0,
+        "distinct": 2,
+        "min": 0,
+        "max": 1
+      }
+    },
+    "samples": [
+      {
+        "id": 1,
+        "circonscription_id": 1,
+        "nom_liste_candidat": "DIMBA N'GOU PIERRE",
+        "parti_politique": "RHDP",
+        "nom_liste_candidat_norm": "dimba n'gou pierre",
+        "parti_politique_norm": "rhdp",
+        "score_voix": 10675,
+        "pourcentage_voix": 0.8537,
+        "est_elu": 1
+      },
+      {
+        "id": 2,
+        "circonscription_id": 1,
+        "nom_liste_candidat": "NANDO YAVO SERGE",
+        "parti_politique": "MGC",
+        "nom_liste_candidat_norm": "nando yavo serge",
+        "parti_politique_norm": "mgc",
+        "score_voix": 453,
+        "pourcentage_voix": 0.0331,
+        "est_elu": 0
+      },
+      {
+        "id": 3,
+        "circonscription_id": 1,
+        "nom_liste_candidat": "OCHOU WROHOUM MARIE-PASCALE",
+        "parti_politique": "ADCI",
+        "nom_liste_candidat_norm": "ochou wrohoum marie-pascale",
+        "parti_politique_norm": "adci",
+        "score_voix": 296,
+        "pourcentage_voix": 0.023700000000000002,
+        "est_elu": 0
+      }
+    ]
+  },
+  "circonscriptions": {
+    "kind": "table",
+    "rows": 205,
+    "foreign_keys": [],
+    "columns": {
+      "id": {
+        "type": "INTEGER",
+        "null_pct": 0.0,
+        "distinct": 205,
+        "min": 1,
+        "max": 205
+      },
+      "region_nom": {
+        "type": "VARCHAR",
+        "null_pct": 0.0,
+        "distinct": 35,
+        "values": [
+          "AGNEBY-TIASSA",
+          "BAFING",
+          "BAGOUE",
+          "BELIER",
+          "BERE",
+          "BOUNKANI",
+          "C",
+          "CAVALLY",
+          "DISTRICT AUTONOME D'ABIDJAN",
+          "DISTRICT AUTONOME DE YAMOUSSOUKRO",
+          "FOLON",
+          "GBEKE",
+          "GBOKLE",
+          "GOH",
+          "GRANDS PONTS",
+          "GUEMON",
+          "HAMBOL",
+          "HAUT- SASSANDRA",
+          "HAUT-SASSANDRA",
+          "IFFOU",
+          "INDENIE-DJUABLIN",
+          "KABADOUGOU",
+          "LA ME",
+          "LOH-DJIBOUA",
+          "MARAHOUE",
+          "MORONOU",
+          "N'ZI",
+          "NAWA",
+          "PORO",
+          "RHDP",
+          "SAN-PEDRO",
+          "SUD-COMOE",
+          "TCHOLOGO",
+          "TONKPI",
+          "WORODOUGOU"
+        ]
+      },
+      "code_circonscription": {
+        "type": "VARCHAR",
+        "null_pct": 1.5,
+        "distinct": 191,
+        "top_values": [
+          "083",
+          "203",
+          "192",
+          "191",
+          "134"
+        ]
+      },
+      "nom_circonscription": {
+        "type": "VARCHAR",
+        "null_pct": 0.0,
+        "distinct": 202,
+        "top_values": [
+          "SEGUELA, COMMUNE",
+          "DAKPADOU ET SAGO, COMMUNES ET SOUS-PREFECTURES",
+          "BOUAFLE, COMMUNE",
+          "ZUENOULA, COMMUNE",
+          "YOPOUGON,COMMUNE"
+        ]
+      },
+      "region_nom_norm": {
+        "type": "VARCHAR",
+        "null_pct": 0.0,
+        "distinct": 35,
+        "values": [
+          "agneby-tiassa",
+          "bafing",
+          "bagoue",
+          "belier",
+          "bere",
+          "bounkani",
+          "c",
+          "cavally",
+          "district autonome d'abidjan",
+          "district autonome de yamoussoukro",
+          "folon",
+          "gbeke",
+          "gbokle",
+          "goh",
+          "grands ponts",
+          "guemon",
+          "hambol",
+          "haut- sassandra",
+          "haut-sassandra",
+          "iffou",
+          "indenie-djuablin",
+          "kabadougou",
+          "la me",
+          "loh-djiboua",
+          "marahoue",
+          "moronou",
+          "n'zi",
+          "nawa",
+          "poro",
+          "rhdp",
+          "san-pedro",
+          "sud-comoe",
+          "tchologo",
+          "tonkpi",
+          "worodougou"
+        ]
+      },
+      "nom_circonscription_norm": {
+        "type": "VARCHAR",
+        "null_pct": 0.0,
+        "distinct": 202,
+        "top_values": [
+          "bouafle, commune",
+          "dakpadou et sago, communes et sous-prefectures",
+          "seguela, commune",
+          "abengourou, commune",
+          "abengourou, sous-prefecture, amelekia, anianssue, ebilassokro, niable, yakasse-feyasse et zaranou, communes et sous-prefectures"
+        ]
+      },
+      "nb_bureau": {
+        "type": "INTEGER",
+        "null_pct": 0.0,
+        "distinct": 110,
+        "min": 23,
+        "max": 1320
+      },
+      "inscrits": {
+        "type": "INTEGER",
+        "null_pct": 0.0,
+        "distinct": 202,
+        "min": 7903,
+        "max": 555901
+      },
+      "votants": {
+        "type": "INTEGER",
+        "null_pct": 0.0,
+        "distinct": 202,
+        "min": 4476,
+        "max": 142250
+      },
+      "taux_participation": {
+        "type": "FLOAT",
+        "null_pct": 0.0,
+        "distinct": 201,
+        "min": 0.1011,
+        "max": 0.9998
+      },
+      "bulletins_nuls": {
+        "type": "INTEGER",
+        "null_pct": 0.0,
+        "distinct": 173,
+        "min": 0,
+        "max": 3423
+      },
+      "suffrages_exprimes": {
+        "type": "INTEGER",
+        "null_pct": 0.0,
+        "distinct": 203,
+        "min": 4320,
+        "max": 141992
+      },
+      "bulletins_blancs_nombre": {
+        "type": "INTEGER",
+        "null_pct": 0.0,
+        "distinct": 128,
+        "min": 0,
+        "max": 1214
+      },
+      "bulletins_blancs_pourcentage": {
+        "type": "FLOAT",
+        "null_pct": 0.0,
+        "distinct": 127,
+        "min": 0.0,
+        "max": 0.0355
+      }
+    },
+    "samples": [
+      {
+        "id": 1,
+        "region_nom": "AGNEBY-TIASSA",
+        "code_circonscription": null,
+        "nom_circonscription": "AGBOVILLE COMMUNE",
+        "region_nom_norm": "agneby-tiassa",
+        "nom_circonscription_norm": "agboville commune",
+        "nb_bureau": 133,
+        "inscrits": 48710,
+        "votants": 12821,
+        "taux_participation": 0.2632,
+        "bulletins_nuls": 317,
+        "suffrages_exprimes": 12504,
+        "bulletins_blancs_nombre": 81,
+        "bulletins_blancs_pourcentage": 0.006500000000000001
+      },
+      {
+        "id": 2,
+        "region_nom": "AGNEBY-TIASSA",
+        "code_circonscription": null,
+        "nom_circonscription": "AZAGUIE COMMUNE ET SOUS-PREFECTURE",
+        "region_nom_norm": "agneby-tiassa",
+        "nom_circonscription_norm": "azaguie commune et sous-prefecture",
+        "nb_bureau": 44,
+        "inscrits": 15515,
+        "votants": 5174,
+        "taux_participation": 0.3335,
+        "bulletins_nuls": 73,
+        "suffrages_exprimes": 5101,
+        "bulletins_blancs_nombre": 24,
+        "bulletins_blancs_pourcentage": 0.004699999999999999
+      },
+      {
+        "id": 3,
+        "region_nom": "AGNEBY-TIASSA",
+        "code_circonscription": null,
+        "nom_circonscription": "ANANGUIE, CECHI ET RUBINO, COMMUNES ET SOUS-PREFECTURES",
+        "region_nom_norm": "agneby-tiassa",
+        "nom_circonscription_norm": "ananguie, cechi et rubino, communes et sous-prefectures",
+        "nb_bureau": 72,
+        "inscrits": 23466,
+        "votants": 7650,
+        "taux_participation": 0.326,
+        "bulletins_nuls": 241,
+        "suffrages_exprimes": 7409,
+        "bulletins_blancs_nombre": 49,
+        "bulletins_blancs_pourcentage": 0.0066
+      }
+    ]
+  },
+  "vue_elus_uniquement": {
+    "kind": "view",
+    "rows": 173,
+    "foreign_keys": [],
+    "columns": {
+      "region_nom": {
+        "type": "VARCHAR",
+        "null_pct": 0.0,
+        "distinct": 34,
+        "values": [
+          "AGNEBY-TIASSA",
+          "BAFING",
+          "BAGOUE",
+          "BELIER",
+          "BERE",
+          "BOUNKANI",
+          "C",
+          "CAVALLY",
+          "DISTRICT AUTONOME D'ABIDJAN",
+          "FOLON",
+          "GBEKE",
+          "GBOKLE",
+          "GOH",
+          "GRANDS PONTS",
+          "GUEMON",
+          "HAMBOL",
+          "HAUT- SASSANDRA",
+          "HAUT-SASSANDRA",
+          "IFFOU",
+          "INDENIE-DJUABLIN",
+          "KABADOUGOU",
+          "LA ME",
+          "LOH-DJIBOUA",
+          "MARAHOUE",
+          "MORONOU",
+          "N'ZI",
+          "NAWA",
+          "PORO",
+          "RHDP",
+          "SAN-PEDRO",
+          "SUD-COMOE",
+          "TCHOLOGO",
+          "TONKPI",
+          "WORODOUGOU"
+        ]
+      },
+      "region_nom_norm": {
+        "type": "VARCHAR",
+        "null_pct": 0.0,
+        "distinct": 34,
+        "values": [
+          "agneby-tiassa",
+          "bafing",
+          "bagoue",
+          "belier",
+          "bere",
+          "bounkani",
+          "c",
+          "cavally",
+          "district autonome d'abidjan",
+          "folon",
+          "gbeke",
+          "gbokle",
+          "goh",
+          "grands ponts",
+          "guemon",
+          "hambol",
+          "haut- sassandra",
+          "haut-sassandra",
+          "iffou",
+          "indenie-djuablin",
+          "kabadougou",
+          "la me",
+          "loh-djiboua",
+          "marahoue",
+          "moronou",
+          "n'zi",
+          "nawa",
+          "poro",
+          "rhdp",
+          "san-pedro",
+          "sud-comoe",
+          "tchologo",
+          "tonkpi",
+          "worodougou"
+        ]
+      },
+      "nom_circonscription": {
+        "type": "VARCHAR",
+        "null_pct": 0.0,
+        "distinct": 159,
+        "top_values": [
+          "ZUENOULA, COMMUNE",
+          "SOUBRE, COMMUNES ET SOUS-PREFECTURE",
+          "LILIYO ET OKROUYO, COMMUNES ET SOUS-PREFECTURES",
+          "KIEMOU ET NAPIE, COMMUNES ET SOUS-PREFECTURES",
+          "KARAKORO ET KOMBORODOUGOU, COMMUNES ET SOUS-PREFECTURES"
+        ]
+      },
+      "nom_circonscription_norm": {
+        "type": "VARCHAR",
+        "null_pct": 0.0,
+        "distinct": 159,
+        "top_values": [
+          "zuenoula, commune",
+          "soubre, communes et sous-prefecture",
+          "liliyo et okrouyo, communes et sous-prefectures",
+          "kiemou et napie, communes et sous-prefectures",
+          "karakoro et komborodougou, communes et sous-prefectures"
+        ]
+      },
+      "parti_politique": {
+        "type": "VARCHAR",
+        "null_pct": 0.0,
+        "distinct": 6,
+        "values": [
+          "FPI",
+          "INDEPENDANT",
+          "LE BUFFLE",
+          "PDCI-RDA",
+          "RHDP",
+          "UNPR"
+        ]
+      },
+      "parti_politique_norm": {
+        "type": "VARCHAR",
+        "null_pct": 0.0,
+        "distinct": 6,
+        "values": [
+          "fpi",
+          "independant",
+          "le buffle",
+          "pdci-rda",
+          "rhdp",
+          "unpr"
+        ]
+      },
+      "nom_liste_candidat": {
+        "type": "VARCHAR",
+        "null_pct": 0.0,
+        "distinct": 161,
+        "top_values": [
+          "UNE COTE DIVOIRE EN PAIX, PROSPERE ET SOLIDAIRE",
+          "TOUS ENSEMBLE POUR LA CÔTE D'IVOIRE",
+          "UNE CÔTE DIVOIRE EN PAIX, PROSPÈRE ET SOLIDAIRE",
+          "UNE CÔTE D'IVOIRE EN PAIX PROSPERE ET SOLIDAIRE",
+          "UNE COTE DIVOIRE EN PAIX,PROSPERE ET SOLIDAIRE"
+        ]
+      },
+      "nom_liste_candidat_norm": {
+        "type": "VARCHAR",
+        "null_pct": 0.0,
+        "distinct": 158,
+        "top_values": [
+          "une cote divoire en paix, prospere et solidaire",
+          "tous ensemble pour la cote d'ivoire",
+          "une cote d'ivoire en paix prospere et solidaire",
+          "une cote divoire en paix,prospere et solidaire",
+          "une cote divoire en paix prospere et solidaire"
+        ]
+      },
+      "score_voix": {
+        "type": "INTEGER",
+        "null_pct": 0.0,
+        "distinct": 171,
+        "min": 1159,
+        "max": 141884
+      }
+    },
+    "samples": [
+      {
+        "region_nom": "AGNEBY-TIASSA",
+        "region_nom_norm": "agneby-tiassa",
+        "nom_circonscription": "AGBOVILLE COMMUNE",
+        "nom_circonscription_norm": "agboville commune",
+        "parti_politique": "RHDP",
+        "parti_politique_norm": "rhdp",
+        "nom_liste_candidat": "DIMBA N'GOU PIERRE",
+        "nom_liste_candidat_norm": "dimba n'gou pierre",
+        "score_voix": 10675
+      },
+      {
+        "region_nom": "AGNEBY-TIASSA",
+        "region_nom_norm": "agneby-tiassa",
+        "nom_circonscription": "AZAGUIE COMMUNE ET SOUS-PREFECTURE",
+        "nom_circonscription_norm": "azaguie commune et sous-prefecture",
+        "parti_politique": "RHDP",
+        "parti_politique_norm": "rhdp",
+        "nom_liste_candidat": "ALAIN EKISSI",
+        "nom_liste_candidat_norm": "alain ekissi",
+        "score_voix": 1673
+      },
+      {
+        "region_nom": "AGNEBY-TIASSA",
+        "region_nom_norm": "agneby-tiassa",
+        "nom_circonscription": "ANANGUIE, CECHI ET RUBINO, COMMUNES ET SOUS-PREFECTURES",
+        "nom_circonscription_norm": "ananguie, cechi et rubino, communes et sous-prefectures",
+        "parti_politique": "RHDP",
+        "parti_politique_norm": "rhdp",
+        "nom_liste_candidat": "KOUASSI MARIE VIRGINIE",
+        "nom_liste_candidat_norm": "kouassi marie virginie",
+        "score_voix": 2607
+      }
+    ]
+  },
+  "vue_resultats_detailles": {
+    "kind": "view",
+    "rows": 930,
+    "foreign_keys": [],
+    "columns": {
+      "region_nom": {
+        "type": "VARCHAR",
+        "null_pct": 0.0,
+        "distinct": 35,
+        "values": [
+          "AGNEBY-TIASSA",
+          "BAFING",
+          "BAGOUE",
+          "BELIER",
+          "BERE",
+          "BOUNKANI",
+          "C",
+          "CAVALLY",
+          "DISTRICT AUTONOME D'ABIDJAN",
+          "DISTRICT AUTONOME DE YAMOUSSOUKRO",
+          "FOLON",
+          "GBEKE",
+          "GBOKLE",
+          "GOH",
+          "GRANDS PONTS",
+          "GUEMON",
+          "HAMBOL",
+          "HAUT- SASSANDRA",
+          "HAUT-SASSANDRA",
+          "IFFOU",
+          "INDENIE-DJUABLIN",
+          "KABADOUGOU",
+          "LA ME",
+          "LOH-DJIBOUA",
+          "MARAHOUE",
+          "MORONOU",
+          "N'ZI",
+          "NAWA",
+          "PORO",
+          "RHDP",
+          "SAN-PEDRO",
+          "SUD-COMOE",
+          "TCHOLOGO",
+          "TONKPI",
+          "WORODOUGOU"
+        ]
+      },
+      "region_nom_norm": {
+        "type": "VARCHAR",
+        "null_pct": 0.0,
+        "distinct": 35,
+        "values": [
+          "agneby-tiassa",
+          "bafing",
+          "bagoue",
+          "belier",
+          "bere",
+          "bounkani",
+          "c",
+          "cavally",
+          "district autonome d'abidjan",
+          "district autonome de yamoussoukro",
+          "folon",
+          "gbeke",
+          "gbokle",
+          "goh",
+          "grands ponts",
+          "guemon",
+          "hambol",
+          "haut- sassandra",
+          "haut-sassandra",
+          "iffou",
+          "indenie-djuablin",
+          "kabadougou",
+          "la me",
+          "loh-djiboua",
+          "marahoue",
+          "moronou",
+          "n'zi",
+          "nawa",
+          "poro",
+          "rhdp",
+          "san-pedro",
+          "sud-comoe",
+          "tchologo",
+          "tonkpi",
+          "worodougou"
+        ]
+      },
+      "nom_circonscription": {
+        "type": "VARCHAR",
+        "null_pct": 0.0,
+        "distinct": 202,
+        "top_values": [
+          "BAYOTA, DAHIEPA-KEHI, OURAGAHIO ET YOPOHUE, COMMUNES ET SOUS-PREFECTURES",
+          "DOUGROUPALEGNOA, DOUKOUYO, GNAGBODOUGNOA ET SERIHIO, COMMUNES ET SOUS-PREFECTURES, GAGNOA, SOUS-PREFECTURE",
+          "COCODY, COMMUNE",
+          "BOUAFLE, COMMUNE",
+          "LILIYO ET OKROUYO, COMMUNES ET SOUS-PREFECTURES"
+        ]
+      },
+      "nom_circonscription_norm": {
+        "type": "VARCHAR",
+        "null_pct": 0.0,
+        "distinct": 202,
+        "top_values": [
+          "bayota, dahiepa-kehi, ouragahio et yopohue, communes et sous-prefectures",
+          "dougroupalegnoa, doukouyo, gnagbodougnoa et serihio, communes et sous-prefectures, gagnoa, sous-prefecture",
+          "cocody, commune",
+          "bouafle, commune",
+          "liliyo et okrouyo, communes et sous-prefectures"
+        ]
+      },
+      "taux_participation": {
+        "type": "FLOAT",
+        "null_pct": 0.0,
+        "distinct": 201,
+        "min": 0.1011,
+        "max": 0.9998
+      },
+      "parti_politique": {
+        "type": "VARCHAR",
+        "null_pct": 0.2,
+        "distinct": 41,
+        "top_values": [
+          "INDEPENDANT",
+          "RHDP",
+          "PDCI-RDA",
+          "ADCI",
+          "MGC"
+        ]
+      },
+      "parti_politique_norm": {
+        "type": "VARCHAR",
+        "null_pct": 0.0,
+        "distinct": 42,
+        "top_values": [
+          "independant",
+          "rhdp",
+          "pdci-rda",
+          "adci",
+          "mgc"
+        ]
+      },
+      "nom_liste_candidat": {
+        "type": "VARCHAR",
+        "null_pct": 0.0,
+        "distinct": 893,
+        "top_values": [
+          "TOUS ENSEMBLE POUR LA CÔTE D'IVOIRE",
+          "UNE COTE DIVOIRE EN PAIX, PROSPERE ET SOLIDAIRE",
+          "UNE CÔTE DIVOIRE EN PAIX, PROSPÈRE ET SOLIDAIRE",
+          "UNE COTE DIVOIRE EN PAIX PROSPERE ET SOLIDAIRE",
+          "INDEPENDANT"
+        ]
+      },
+      "nom_liste_candidat_norm": {
+        "type": "VARCHAR",
+        "null_pct": 0.0,
+        "distinct": 890,
+        "top_values": [
+          "tous ensemble pour la cote d'ivoire",
+          "une cote divoire en paix, prospere et solidaire",
+          "une cote divoire en paix prospere et solidaire",
+          "une cote d'ivoire en paix prospere et solidaire",
+          "independant"
+        ]
+      },
+      "score_voix": {
+        "type": "INTEGER",
+        "null_pct": 0.0,
+        "distinct": 742,
+        "min": 0,
+        "max": 141884
+      },
+      "pourcentage_voix": {
+        "type": "FLOAT",
+        "null_pct": 0.0,
+        "distinct": 751,
+        "min": 0.0,
+        "max": 1.0
+      },
+      "est_elu": {
+        "type": "INTEGER",
+        "null_pct": 0.0,
+        "distinct": 2,
+        "min": 0,
+        "max": 1
+      }
+    },
+    "samples": [
+      {
+        "region_nom": "AGNEBY-TIASSA",
+        "region_nom_norm": "agneby-tiassa",
+        "nom_circonscription": "AGBOVILLE COMMUNE",
+        "nom_circonscription_norm": "agboville commune",
+        "taux_participation": 0.2632,
+        "parti_politique": "RHDP",
+        "parti_politique_norm": "rhdp",
+        "nom_liste_candidat": "DIMBA N'GOU PIERRE",
+        "nom_liste_candidat_norm": "dimba n'gou pierre",
+        "score_voix": 10675,
+        "pourcentage_voix": 0.8537,
+        "est_elu": 1
+      },
+      {
+        "region_nom": "AGNEBY-TIASSA",
+        "region_nom_norm": "agneby-tiassa",
+        "nom_circonscription": "AGBOVILLE COMMUNE",
+        "nom_circonscription_norm": "agboville commune",
+        "taux_participation": 0.2632,
+        "parti_politique": "MGC",
+        "parti_politique_norm": "mgc",
+        "nom_liste_candidat": "NANDO YAVO SERGE",
+        "nom_liste_candidat_norm": "nando yavo serge",
+        "score_voix": 453,
+        "pourcentage_voix": 0.0331,
+        "est_elu": 0
+      },
+      {
+        "region_nom": "AGNEBY-TIASSA",
+        "region_nom_norm": "agneby-tiassa",
+        "nom_circonscription": "AGBOVILLE COMMUNE",
+        "nom_circonscription_norm": "agboville commune",
+        "taux_participation": 0.2632,
+        "parti_politique": "ADCI",
+        "parti_politique_norm": "adci",
+        "nom_liste_candidat": "OCHOU WROHOUM MARIE-PASCALE",
+        "nom_liste_candidat_norm": "ochou wrohoum marie-pascale",
+        "score_voix": 296,
+        "pourcentage_voix": 0.023700000000000002,
+        "est_elu": 0
+      }
+    ]
+  },
+  "vue_stats_regionales": {
+    "kind": "view",
+    "rows": 35,
+    "foreign_keys": [],
+    "columns": {
+      "region_nom": {
+        "type": "VARCHAR",
+        "null_pct": 0.0,
+        "distinct": 35,
+        "values": [
+          "AGNEBY-TIASSA",
+          "BAFING",
+          "BAGOUE",
+          "BELIER",
+          "BERE",
+          "BOUNKANI",
+          "C",
+          "CAVALLY",
+          "DISTRICT AUTONOME D'ABIDJAN",
+          "DISTRICT AUTONOME DE YAMOUSSOUKRO",
+          "FOLON",
+          "GBEKE",
+          "GBOKLE",
+          "GOH",
+          "GRANDS PONTS",
+          "GUEMON",
+          "HAMBOL",
+          "HAUT- SASSANDRA",
+          "HAUT-SASSANDRA",
+          "IFFOU",
+          "INDENIE-DJUABLIN",
+          "KABADOUGOU",
+          "LA ME",
+          "LOH-DJIBOUA",
+          "MARAHOUE",
+          "MORONOU",
+          "N'ZI",
+          "NAWA",
+          "PORO",
+          "RHDP",
+          "SAN-PEDRO",
+          "SUD-COMOE",
+          "TCHOLOGO",
+          "TONKPI",
+          "WORODOUGOU"
+        ]
+      },
+      "region_nom_norm": {
+        "type": "VARCHAR",
+        "null_pct": 0.0,
+        "distinct": 35,
+        "values": [
+          "agneby-tiassa",
+          "bafing",
+          "bagoue",
+          "belier",
+          "bere",
+          "bounkani",
+          "c",
+          "cavally",
+          "district autonome d'abidjan",
+          "district autonome de yamoussoukro",
+          "folon",
+          "gbeke",
+          "gbokle",
+          "goh",
+          "grands ponts",
+          "guemon",
+          "hambol",
+          "haut- sassandra",
+          "haut-sassandra",
+          "iffou",
+          "indenie-djuablin",
+          "kabadougou",
+          "la me",
+          "loh-djiboua",
+          "marahoue",
+          "moronou",
+          "n'zi",
+          "nawa",
+          "poro",
+          "rhdp",
+          "san-pedro",
+          "sud-comoe",
+          "tchologo",
+          "tonkpi",
+          "worodougou"
+        ]
+      },
+      "total_inscrits": {
+        "type": "INTEGER",
+        "null_pct": 0.0,
+        "distinct": 35,
+        "min": 20148,
+        "max": 2312326
+      },
+      "total_votants": {
+        "type": "INTEGER",
+        "null_pct": 0.0,
+        "distinct": 35,
+        "min": 7201,
+        "max": 436458
+      },
+      "total_exprimes": {
+        "type": "INTEGER",
+        "null_pct": 0.0,
+        "distinct": 35,
+        "min": 7121,
+        "max": 426120
+      },
+      "taux_participation_regional": {
+        "type": "REAL",
+        "null_pct": 0.0,
+        "distinct": 35,
+        "min": 0.1888,
+        "max": 0.7914
+      }
+    },
+    "samples": [
+      {
+        "region_nom": "AGNEBY-TIASSA",
+        "region_nom_norm": "agneby-tiassa",
+        "total_inscrits": 250408,
+        "total_votants": 88553,
+        "total_exprimes": 86199,
+        "taux_participation_regional": 0.3536
+      },
+      {
+        "region_nom": "BAFING",
+        "region_nom_norm": "bafing",
+        "total_inscrits": 117784,
+        "total_votants": 85494,
+        "total_exprimes": 84699,
+        "taux_participation_regional": 0.7259
+      },
+      {
+        "region_nom": "BAGOUE",
+        "region_nom_norm": "bagoue",
+        "total_inscrits": 88167,
+        "total_votants": 54428,
+        "total_exprimes": 53954,
+        "taux_participation_regional": 0.6173
+      }
+    ]
+  }
+}
