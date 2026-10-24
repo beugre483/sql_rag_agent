@@ -21,6 +21,9 @@ ELECTION_QUERY_SIGNALS = (
     "sous-prefecture", "sous-préfecture", "score",
 )
 
+PARTY_SIGNALS = ("rhdp", "pdci", "ppa-ci", "ppaci", "fpi")
+SEAT_SIGNALS = ("siege", "siège", "sieges", "sièges")
+
 
 def _looks_like_election_query(user_query: str) -> bool:
     """Détecte les questions électorales que le classificateur ne doit pas rejeter.
@@ -33,26 +36,47 @@ def _looks_like_election_query(user_query: str) -> bool:
     return any(signal in normalized_query for signal in ELECTION_QUERY_SIGNALS)
 
 
+def _is_party_seat_count_query(user_query: str) -> bool:
+    """Repère les comptages de sièges, calculables sans appel au modèle."""
+    normalized_query = user_query.lower()
+    return (
+        any(party in normalized_query for party in PARTY_SIGNALS)
+        and any(seat in normalized_query for seat in SEAT_SIGNALS)
+    )
+
+
 @traceable(name="intent_classification")
 def classify_intent_node(state: AgentState) -> Command[Literal[
     "recherche_similaire", "generate_clarification",
     "reponse_hors_sujet", "reponse_politique"
 ]]:
+    user_query = state["user_query"]
+
+    # Chemin rapide pour une demande fréquente comme « Combien de sièges a
+    # gagné le RHDP ? ». Il évite un aller-retour réseau inutile vers le LLM.
+    if _is_party_seat_count_query(user_query):
+        classification = UserQueryClassification(
+            request_validity="allowed",
+            query_nature="aggregation",
+            reasoning_summary="Comptage de sièges par parti détecté localement.",
+        )
+        return Command(update={"classification": classification}, goto="recherche_similaire")
+
     messages = [
         {"role": "system", "content": CLASSIFY_INTENT_SYSTEM},
-        {"role": "user",   "content": f"Question : {state['user_query']}"}
+        {"role": "user",   "content": f"Question : {user_query}"}
     ]
 
     try:
         classification = llm_client.invoke_structured(messages, UserQueryClassification)
     except Exception as e:
-        return _handle_classification_error(state["user_query"], str(e))
+        return _handle_classification_error(user_query, str(e))
 
     # Une ville inconnue de la liste fournie au prompt reste interrogable dans
     # la base. Ne pas la traiter comme une donnée indisponible.
     if (
         classification.request_validity == "out_of_scope"
-        and _looks_like_election_query(state["user_query"])
+        and _looks_like_election_query(user_query)
     ):
         classification = classification.model_copy(
             update={

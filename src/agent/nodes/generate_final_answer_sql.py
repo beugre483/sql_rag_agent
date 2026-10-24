@@ -6,10 +6,6 @@ from langsmith import traceable
 
 from ..state import AgentState
 from ..llm_client import LLMClient
-from ...prompt.templates import GENERATE_FINAL_ANSWER_SYSTEM, GENERATE_FINAL_ANSWER_HUMAN
-
-# Client instancié une seule fois au chargement du module
-llm_client = LLMClient()
 
 
 @traceable(name="generate_final_answer")
@@ -23,30 +19,12 @@ def generate_final_answer_node(state: AgentState) -> Command:
             goto=END
         )
 
-    # Formatage des données brutes → tableau markdown, au dernier moment
-    formatted_data = _format_results_to_markdown(sql_results)
-
-    human_message = GENERATE_FINAL_ANSWER_HUMAN.format(
-        user_query=user_query,
-        formatted_data=formatted_data,
+    # Les résultats SQL sont déjà structurés : les afficher directement évite
+    # un troisième appel réseau au LLM et rend le chat beaucoup plus réactif.
+    return Command(
+        update={"final_answer": _format_results_to_markdown(sql_results)},
+        goto=END,
     )
-
-    messages = [
-        {"role": "system", "content": GENERATE_FINAL_ANSWER_SYSTEM},
-        {"role": "user",   "content": human_message},
-    ]
-
-    try:
-        response   = llm_client.invoke(messages)
-        final_text = response.content.strip() if hasattr(response, "content") else str(response).strip()
-        return Command(update={"final_answer": final_text}, goto=END)
-
-    except Exception as e:
-        print(f"  ✗ [Error] : {e}")
-        return Command(
-            update={"final_answer": "Erreur lors de la mise en forme des résultats."},
-            goto=END
-        )
 
 
 def _format_results_to_markdown(results: List[Dict]) -> str:

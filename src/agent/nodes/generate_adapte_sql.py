@@ -13,6 +13,27 @@ from src.ingestion.clean_data import ElectionDataCleaner
 llm_client = LLMClient()
 
 
+def _build_direct_party_seat_count_query(normalized_query: str) -> str | None:
+    """Construit localement le SQL des comptages de sièges par parti."""
+    parties = ("rhdp", "pdci", "ppa-ci", "ppaci", "fpi")
+    seat_terms = ("siege", "siège", "sieges", "sièges")
+
+    if not any(term in normalized_query for term in seat_terms):
+        return None
+
+    party = next((item for item in parties if item in normalized_query), None)
+    if not party:
+        return None
+
+    # La colonne normalisée de la base contient les sigles sans ponctuation.
+    party_norm = party.replace("-", "")
+    return (
+        "SELECT COUNT(*) AS nombre_sieges "
+        "FROM vue_elus_uniquement "
+        f"WHERE parti_politique_norm LIKE '%{party_norm}%'"
+    )
+
+
 @traceable(name="sql_generation")
 def generate_sql_query_node(state: AgentState) -> Command[Literal["verify_sql"]]:
     user_query      = state.get("user_query", "")
@@ -25,6 +46,11 @@ def generate_sql_query_node(state: AgentState) -> Command[Literal["verify_sql"]]
         normalized_query = ElectionDataCleaner.normalize_text(user_query)
     except Exception:
         normalized_query = user_query.lower().strip()
+
+    direct_query = _build_direct_party_seat_count_query(normalized_query)
+    if direct_query:
+        print(f"\n[Generate SQL] SQL direct : {direct_query}")
+        return Command(update={"sql_query": direct_query}, goto="verify_sql")
 
     error_feedback = (
         f"\nERREUR PRÉCÉDENTE À CORRIGER : {errors[-1]}\n" if errors else ""
