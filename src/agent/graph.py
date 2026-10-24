@@ -1,0 +1,53 @@
+# src/agent/graph.py
+
+from langgraph.graph import StateGraph, END
+from langgraph.types import Command
+from .state import AgentState
+
+# Importation de tous les nœuds
+from src.agent.nodes.classify_intent_sql import (
+    classify_intent_node, 
+    reponse_hors_sujet_node, 
+    reponse_politique_node)
+from src.agent.nodes.generate_clarification_node import generate_clarification_node
+from src.agent.nodes.retrieve_similar_sql import retrieve_similar_examples
+from src.agent.nodes.generate_adapte_sql import generate_sql_query_node
+from src.agent.nodes.verify_sql import verify_sql_node
+from src.agent.nodes.execute_sql import execute_sql_node
+from src.agent.nodes.generate_chart_sql import (
+    determine_chart_intent_node, 
+    generate_chart_node
+)
+from src.agent.nodes.generate_final_answer_sql import generate_final_answer_node
+from src.agent.nodes.guardrial_node_sql import guardrail_node
+
+
+
+def build_agent_graph():
+    """
+    Construit le graphe de l'agent.
+    """
+    
+    # Initialisation du graphe avec la structure AgentState
+    builder = StateGraph(AgentState)
+
+    # --- 1. AJOUT DES NŒUDS ---
+    builder.add_node("guardrail", guardrail_node)
+    builder.add_node("classify_intent", classify_intent_node)
+    
+   
+    builder.add_node("generate_clarification", generate_clarification_node)
+    
+    builder.add_node("recherche_similaire", retrieve_similar_examples)
+    builder.add_node("generate_sql", generate_sql_query_node)
+    builder.add_node("verify_sql", verify_sql_node)
+    builder.add_node("execute_sql", execute_sql_node)
+    builder.add_node("determine_chart_intent", determine_chart_intent_node)
+    builder.add_node("generate_chart", generate_chart_node)
+    builder.add_node("generate_final_answer", generate_final_answer_node)
+    builder.add_node("reponse_hors_sujet", reponse_hors_sujet_node)
+    builder.add_node("reponse_politique", reponse_politique_node)
+
+    builder.set_entry_point("guardrail")
+
+    return builder.compile()
